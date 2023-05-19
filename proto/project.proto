@@ -6,11 +6,11 @@ import "google/protobuf/timestamp.proto";
 option go_package = "./pkg/project";
 
 service ProjectService {
-  rpc CreateProject(CreateProjectRequest) returns () {}
-  rpc DeleteProject() returns () {}
-  rpc UpdateProject() returns () {}
-  rpc GetProjectByID() returns () {}
-  rpc GetProjects() returns () {}
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
+  rpc GetProjectByID(GetProjectByIdRequest) returns (GetProjectByIdResponse) {}
+  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {}
 }
 
 message Images {
@@ -47,16 +47,65 @@ message RoadMap {
   uint64 project_id = 7;
 }
 
+message Project {
+  uint64 id = 1;
+  Images images = 2;
+  Date dates = 3;
+  Budget budgets = 4;
+  string location = 5;
+  string name = 6;
+  string description = 7;
+  string industry = 8;
+  repeated Investor investors = 9;
+  repeated RoadMap roadmaps = 10;
+  uint32 organization_id = 11;
+}
+
 message CreateProjectRequest {
-    uint64 id = 1;
-    Images images = 2;
-    Date dates = 3;
-    Budget budgets = 4;
-    string location = 5;
-    string name = 6;
-    string description = 7;
-    string industry = 8;
-    repeated Investor investors = 9;
-    repeated RoadMap roadmaps = 10;
-    uint32 organization_id = 11;
+  Project project = 1;
+}
+
+message CreateProjectResponse {
+  int64 status = 1;
+  string error = 2;
+}
+
+message DeleteProjectRequest {
+  int64 project_id = 1;
+}
+
+message DeleteProjectResponse {
+  int64 status = 1;
+  string error = 2;
+}
+
+message UpdateProjectRequest {
+  int64 project_id = 1;
+  Project project = 2;
+}
+
+message UpdateProjectResponse {
+  int64 status = 1;
+  string error = 2;
+}
+
+message GetProjectByIdRequest {
+  int64 project_id = 1;
+}
+
+message GetProjectByIdResponse {
+  int64 status = 1;
+  string error = 2;
+  Project project = 3;
+}
+
+message GetProjectsRequest {
+  int64 page = 1;
+  int64 page_size = 2;
+}
+
+message GetProjectsResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated Project projects = 3;
 }
