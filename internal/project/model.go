@@ -31,6 +31,10 @@ type Project struct {
 	OrganizationID uint32
 }
 
+func (p Project) toRPC() {
+
+}
+
 type Roadmap struct {
 	ID          uint64 `gorm:"primaryKey"`
 	Dates       Date   `gorm:"embedded"`
