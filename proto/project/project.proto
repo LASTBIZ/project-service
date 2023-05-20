@@ -1,7 +1,9 @@
 syntax = "proto3";
 
 package project;
-import "google/protobuf/timestamp.proto";
+import "project/investor.proto";
+import "project/roadmap.proto";
+import "project/date.proto";
 
 option go_package = "./pkg/project";
 
@@ -11,10 +13,14 @@ service ProjectService {
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
   rpc GetProjectByID(GetProjectByIdRequest) returns (GetProjectByIdResponse) {}
   rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {}
-  rpc AddRoadmap() returns () {}
-  rpc RemoveRoadmap() returns() {}
-  rpc AddInvestor() returns() {}
-  rpc RemoveInvestor() returns() {}
+  rpc AddRoadmap(CreateRoadmapRequest) returns (RoadmapResponse) {}
+  rpc RemoveRoadmap(DeleteRoadmapRequest) returns(RoadmapResponse) {}
+  rpc AddInvestor(AddInvestorRequest) returns(InvestorResponse) {}
+  rpc RemoveInvestor(RemoveInvestorRequest) returns(InvestorResponse) {}
+  rpc AddMoney(MoneyRequest) returns (InvestorResponse) {}
+  rpc RemoveMoney(MoneyRequest) returns (InvestorResponse) {}
+  rpc SetMoney(MoneyRequest) returns (InvestorResponse) {}
+  rpc InvestProject(InvestProjectRequest) returns (InvestorResponse) {}
 }
 
 message Images {
@@ -22,33 +28,9 @@ message Images {
   string main_image_url = 2;
 }
 
-message Date {
-  google.protobuf.Timestamp start_date = 1;
-  google.protobuf.Timestamp end_date = 2;
-}
-
 message Budget {
   uint64 current = 1;
   uint64 need = 2;
-}
-
-message Investor {
-  uint64 id = 1;
-  uint64 money = 2;
-  string full_name = 3;
-  uint32 user_id = 4;
-  uint32 organization_id = 5;
-  uint32 project_id = 6;
-}
-
-message RoadMap {
-  uint64 id = 1;
-  Date dates = 2;
-  string name = 3;
-  string description = 4;
-  string job = 5;
-  string target = 6;
-  uint64 project_id = 7;
 }
 
 message Project {

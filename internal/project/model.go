@@ -4,6 +4,7 @@ import (
 	"errors"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"lastbiz/project-service/pkg/project"
+	"sort"
 	"strings"
 	"time"
 )
@@ -44,6 +45,20 @@ func (b Budget) ToRPC() *project.Budget {
 	}
 }
 
+type RoadMapSlice []Roadmap
+
+func (p RoadMapSlice) Len() int {
+	return len(p)
+}
+
+func (p RoadMapSlice) Less(i, j int) bool {
+	return p[i].Dates.StartDate.Before(p[j].Dates.StartDate)
+}
+
+func (p RoadMapSlice) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
 type Project struct {
 	ID          uint64 `gorm:"primaryKey"`
 	Images      Image  `gorm:"embedded"`
@@ -62,10 +77,14 @@ func (p Project) ToRPC() *project.Project {
 	for _, investor := range p.Investors {
 		investors = append(investors, investor.ToRPC())
 	}
-
+	r1 := make(RoadMapSlice, 0)
+	for _, roadmap := range p.Roadmaps {
+		r1 = append(r1, roadmap)
+	}
+	sort.Sort(r1)
 	roadmaps := make([]*project.RoadMap, 0)
 
-	for _, roadmap := range p.Roadmaps {
+	for _, roadmap := range r1 {
 		roadmaps = append(roadmaps, roadmap.ToRPC())
 	}
 
@@ -127,6 +146,28 @@ type Roadmap struct {
 	ProjectID   uint64
 }
 
+func (r Roadmap) Validate() error {
+	if r.Dates.StartDate.IsZero() {
+		return errors.New("start date is required")
+	}
+	if r.Dates.EndDate.IsZero() {
+		return errors.New("end date is required")
+	}
+	if strings.TrimSpace(r.Name) == "" {
+		return errors.New("name is required")
+	}
+	if strings.TrimSpace(r.Description) == "" {
+		return errors.New("description is required")
+	}
+	if strings.TrimSpace(r.Job) == "" {
+		return errors.New("job is required")
+	}
+	if strings.TrimSpace(r.Target) == "" {
+		return errors.New("target is required")
+	}
+	return nil
+}
+
 func (r Roadmap) ToRPC() *project.RoadMap {
 	return &project.RoadMap{
 		Id:          r.ID,
@@ -139,26 +180,24 @@ func (r Roadmap) ToRPC() *project.RoadMap {
 }
 
 type Investor struct {
-	ID             uint64 `gorm:"primaryKey"`
-	Money          uint64
-	FullName       string
-	UserID         uint32
-	OrganizationID uint32
-	ProjectID      uint64
+	ID        uint64 `gorm:"primaryKey"`
+	Money     uint64
+	FullName  string
+	UserID    uint32
+	ProjectID *uint64
 }
 
 func (r Investor) ToRPC() *project.Investor {
 	return &project.Investor{
-		Id:        r.ID,
-		Money:     r.Money,
-		FullName:  r.FullName,
-		UserId:    r.UserID,
-		ProjectId: uint32(r.ProjectID),
+		Id:       r.ID,
+		Money:    r.Money,
+		FullName: r.FullName,
+		UserId:   r.UserID,
 	}
 }
 
 type GRPCRoadmap struct {
-	project.RoadMap
+	*project.RoadMap
 }
 
 func (r *GRPCRoadmap) ToRoadmap() Roadmap {
@@ -172,6 +211,5 @@ func (r *GRPCRoadmap) ToRoadmap() Roadmap {
 		Description: r.Description,
 		Job:         r.Job,
 		Target:      r.Target,
-		ProjectID:   r.ProjectId,
 	}
 }
