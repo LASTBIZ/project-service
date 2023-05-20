@@ -11,6 +11,10 @@ service ProjectService {
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
   rpc GetProjectByID(GetProjectByIdRequest) returns (GetProjectByIdResponse) {}
   rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {}
+  rpc AddRoadmap() returns () {}
+  rpc RemoveRoadmap() returns() {}
+  rpc AddInvestor() returns() {}
+  rpc RemoveInvestor() returns() {}
 }
 
 message Images {

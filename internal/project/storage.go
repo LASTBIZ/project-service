@@ -19,16 +19,13 @@ func (s Storage) CreateProject(project Project) error {
 func (s Storage) UpdateProject(projectID uint32, project Project) error {
 	return s.db.Model(&Project{}).Where("id = ?", projectID).
 		Updates(Project{
-			Location:       project.Location,
-			Name:           project.Name,
-			Images:         project.Images,
-			Dates:          project.Dates,
-			Budgets:        project.Budgets,
-			Description:    project.Description,
-			Industry:       project.Industry,
-			Investors:      project.Investors,
-			Roadmaps:       project.Roadmaps,
-			OrganizationID: project.OrganizationID,
+			Location:    project.Location,
+			Name:        project.Name,
+			Images:      project.Images,
+			Dates:       project.Dates,
+			Budgets:     project.Budgets,
+			Description: project.Description,
+			Industry:    project.Industry,
 		}).Error
 }
 
