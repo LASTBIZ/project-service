@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"lastbiz/project-service/pkg/project"
+	"lastbiz/project-service/pkg/project/pb"
 	"sort"
 	"strings"
 	"time"
@@ -23,8 +23,8 @@ type Project struct {
 	CategoryID  string `gorm:"not null; unique_index"`
 }
 
-func (p Project) ToRPC() *project.Project {
-	investors := make([]*project.Investor, 0)
+func (p Project) ToRPC() *pb.Project {
+	investors := make([]*pb.Investor, 0)
 	for _, investor := range p.Investors {
 		investors = append(investors, investor.ToRPC())
 	}
@@ -33,13 +33,13 @@ func (p Project) ToRPC() *project.Project {
 		r1 = append(r1, roadmap)
 	}
 	sort.Sort(r1)
-	roadmaps := make([]*project.RoadMap, 0)
+	roadmaps := make([]*pb.RoadMap, 0)
 
 	for _, roadmap := range r1 {
 		roadmaps = append(roadmaps, roadmap.ToRPC())
 	}
 
-	return &project.Project{
+	return &pb.Project{
 		Id:          p.ID,
 		Images:      p.Images.ToRPC(),
 		Dates:       p.Dates.ToRPC(),
@@ -92,8 +92,8 @@ type Image struct {
 	MainImageUrl  string
 }
 
-func (i Image) ToRPC() *project.Images {
-	return &project.Images{
+func (i Image) ToRPC() *pb.Images {
+	return &pb.Images{
 		RoadmapImgUrl: i.RoadMapImgUrl,
 		MainImageUrl:  i.MainImageUrl,
 	}
@@ -104,8 +104,8 @@ type Date struct {
 	EndDate   time.Time
 }
 
-func (d Date) ToRPC() *project.Date {
-	return &project.Date{
+func (d Date) ToRPC() *pb.Date {
+	return &pb.Date{
 		StartDate: timestamppb.New(d.StartDate),
 		EndDate:   timestamppb.New(d.EndDate),
 	}
@@ -116,8 +116,8 @@ type Budget struct {
 	Need    uint64
 }
 
-func (b Budget) ToRPC() *project.Budget {
-	return &project.Budget{
+func (b Budget) ToRPC() *pb.Budget {
+	return &pb.Budget{
 		Current: b.Current,
 		Need:    b.Need,
 	}

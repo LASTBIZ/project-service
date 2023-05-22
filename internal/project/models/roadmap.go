@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-	"lastbiz/project-service/pkg/project"
+	"lastbiz/project-service/pkg/project/pb"
 	"strings"
 )
 
@@ -52,8 +52,8 @@ func (r Roadmap) Validate() error {
 	return nil
 }
 
-func (r Roadmap) ToRPC() *project.RoadMap {
-	return &project.RoadMap{
+func (r Roadmap) ToRPC() *pb.RoadMap {
+	return &pb.RoadMap{
 		Id:          r.ID,
 		Dates:       r.Dates.ToRPC(),
 		Name:        r.Name,
@@ -64,7 +64,7 @@ func (r Roadmap) ToRPC() *project.RoadMap {
 }
 
 type GRPCRoadmap struct {
-	*project.RoadMap
+	*pb.RoadMap
 }
 
 func (r *GRPCRoadmap) ToRoadmap() Roadmap {

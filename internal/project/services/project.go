@@ -4,14 +4,14 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"lastbiz/project-service/internal/project/models"
-	"lastbiz/project-service/pkg/project"
+	"lastbiz/project-service/pkg/project/pb"
 	"net/http"
 	"unsafe"
 )
 
-func (s Service) CreateProject(ctx context.Context, request *project.CreateProjectRequest) (*project.CreateProjectResponse, error) {
+func (s Service) CreateProject(ctx context.Context, request *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
 	if request.GetProject() == nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "project not found",
 		}, nil
@@ -20,21 +20,21 @@ func (s Service) CreateProject(ctx context.Context, request *project.CreateProje
 	pr := request.GetProject()
 
 	if pr.GetImages() == nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "images required",
 		}, nil
 	}
 
 	if pr.GetBudgets() == nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "budgets required",
 		}, nil
 	}
 
 	if pr.GetRoadmaps() == nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "roadmaps required",
 		}, nil
@@ -71,7 +71,7 @@ func (s Service) CreateProject(ctx context.Context, request *project.CreateProje
 
 	err := createProject.Validate()
 	if err != nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  err.Error(),
 		}, nil
@@ -80,20 +80,20 @@ func (s Service) CreateProject(ctx context.Context, request *project.CreateProje
 	err = s.storage.CreateProject(createProject)
 
 	if err != nil {
-		return &project.CreateProjectResponse{
+		return &pb.CreateProjectResponse{
 			Status: http.StatusInternalServerError,
 			Error:  "error create project",
 		}, nil
 	}
 
-	return &project.CreateProjectResponse{
+	return &pb.CreateProjectResponse{
 		Status: http.StatusOK,
 	}, nil
 }
 
-func (s Service) DeleteProject(ctx context.Context, request *project.DeleteProjectRequest) (*project.DeleteProjectResponse, error) {
+func (s Service) DeleteProject(ctx context.Context, request *pb.DeleteProjectRequest) (*pb.DeleteProjectResponse, error) {
 	if request.GetProjectId() == 0 {
-		return &project.DeleteProjectResponse{
+		return &pb.DeleteProjectResponse{
 			Error:  "project_id not found",
 			Status: http.StatusConflict,
 		}, nil
@@ -101,20 +101,20 @@ func (s Service) DeleteProject(ctx context.Context, request *project.DeleteProje
 
 	err := s.storage.DeleteProject(uint32(request.GetProjectId()))
 	if err != nil {
-		return &project.DeleteProjectResponse{
+		return &pb.DeleteProjectResponse{
 			Error:  "error delete project",
 			Status: http.StatusInternalServerError,
 		}, nil
 	}
 
-	return &project.DeleteProjectResponse{
+	return &pb.DeleteProjectResponse{
 		Status: http.StatusOK,
 	}, nil
 }
 
-func (s Service) UpdateProject(ctx context.Context, request *project.UpdateProjectRequest) (*project.UpdateProjectResponse, error) {
+func (s Service) UpdateProject(ctx context.Context, request *pb.UpdateProjectRequest) (*pb.UpdateProjectResponse, error) {
 	if request.GetProject() == nil {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "project not found",
 		}, nil
@@ -123,21 +123,21 @@ func (s Service) UpdateProject(ctx context.Context, request *project.UpdateProje
 	pr := request.GetProject()
 
 	if pr.GetId() == 0 {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "id required",
 		}, nil
 	}
 
 	if pr.GetImages() == nil {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "images required",
 		}, nil
 	}
 
 	if pr.GetBudgets() == nil {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  "budgets required",
 		}, nil
@@ -173,7 +173,7 @@ func (s Service) UpdateProject(ctx context.Context, request *project.UpdateProje
 
 	err := createProject.Validate()
 	if err != nil {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusConflict,
 			Error:  err.Error(),
 		}, nil
@@ -182,20 +182,20 @@ func (s Service) UpdateProject(ctx context.Context, request *project.UpdateProje
 	err = s.storage.UpdateProject(uint32(createProject.ID), createProject)
 
 	if err != nil {
-		return &project.UpdateProjectResponse{
+		return &pb.UpdateProjectResponse{
 			Status: http.StatusInternalServerError,
 			Error:  "error update project",
 		}, nil
 	}
 
-	return &project.UpdateProjectResponse{
+	return &pb.UpdateProjectResponse{
 		Status: http.StatusOK,
 	}, nil
 }
 
-func (s Service) GetProjectByID(ctx context.Context, request *project.GetProjectByIdRequest) (*project.GetProjectByIdResponse, error) {
+func (s Service) GetProjectByID(ctx context.Context, request *pb.GetProjectByIdRequest) (*pb.GetProjectByIdResponse, error) {
 	if request.GetProjectId() == 0 {
-		return &project.GetProjectByIdResponse{
+		return &pb.GetProjectByIdResponse{
 			Status: http.StatusConflict,
 			Error:  "id required",
 		}, nil
@@ -204,18 +204,18 @@ func (s Service) GetProjectByID(ctx context.Context, request *project.GetProject
 	projectID := request.GetProjectId()
 	pr, err := s.storage.GetProjectByID(uint32(projectID))
 	if err != nil {
-		return &project.GetProjectByIdResponse{
+		return &pb.GetProjectByIdResponse{
 			Status: http.StatusInternalServerError,
 			Error:  "project not found",
 		}, nil
 	}
-	return &project.GetProjectByIdResponse{
+	return &pb.GetProjectByIdResponse{
 		Status:  http.StatusOK,
 		Project: pr.ToRPC(),
 	}, nil
 }
 
-func (s Service) GetProjects(ctx context.Context, request *project.GetProjectsRequest) (*project.GetProjectsResponse, error) {
+func (s Service) GetProjects(ctx context.Context, request *pb.GetProjectsRequest) (*pb.GetProjectsResponse, error) {
 	page := request.GetPage()
 	if page <= 0 {
 		page = 1
@@ -233,19 +233,19 @@ func (s Service) GetProjects(ctx context.Context, request *project.GetProjectsRe
 
 	projects, err := s.storage.GetProjects(s.paninate(int(offset), int(pageSize)))
 	if err != nil {
-		return &project.GetProjectsResponse{
+		return &pb.GetProjectsResponse{
 			Status: http.StatusInternalServerError,
 			Error:  "projects not found",
 		}, nil
 	}
 
-	prs := make([]*project.Project, 0)
+	prs := make([]*pb.Project, 0)
 
 	for _, p := range *projects {
 		prs = append(prs, p.ToRPC())
 	}
 
-	return &project.GetProjectsResponse{
+	return &pb.GetProjectsResponse{
 		Status:   http.StatusOK,
 		Projects: prs,
 	}, nil

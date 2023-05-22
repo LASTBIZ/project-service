@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package project;
 
-option go_package = "./pkg/project";
+option go_package = "./pkg/project/pb";
 import "project/date.proto";
 
 message RoadMap {

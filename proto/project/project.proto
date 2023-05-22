@@ -3,24 +3,35 @@ syntax = "proto3";
 package project;
 import "project/investor.proto";
 import "project/roadmap.proto";
+import "google/protobuf/empty.proto";
+import "project/category.proto";
 import "project/date.proto";
 
-option go_package = "./pkg/project";
+option go_package = "./pkg/project/pb";
 
 service ProjectService {
-  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
-  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
-  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
-  rpc GetProjectByID(GetProjectByIdRequest) returns (GetProjectByIdResponse) {}
-  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse) {}
-  rpc AddRoadmap(CreateRoadmapRequest) returns (RoadmapResponse) {}
-  rpc RemoveRoadmap(DeleteRoadmapRequest) returns(RoadmapResponse) {}
-  rpc AddInvestor(AddInvestorRequest) returns(InvestorResponse) {}
-  rpc RemoveInvestor(RemoveInvestorRequest) returns(InvestorResponse) {}
-  rpc AddMoney(MoneyRequest) returns (InvestorResponse) {}
-  rpc RemoveMoney(MoneyRequest) returns (InvestorResponse) {}
-  rpc SetMoney(MoneyRequest) returns (InvestorResponse) {}
-  rpc InvestProject(InvestProjectRequest) returns (InvestorResponse) {}
+  //project
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse);
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse);
+  rpc GetProjectByID(GetProjectByIdRequest) returns (GetProjectByIdResponse);
+  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse);
+  //roadmap
+  rpc AddRoadmap(CreateRoadmapRequest) returns (RoadmapResponse);
+  rpc RemoveRoadmap(DeleteRoadmapRequest) returns(RoadmapResponse);
+  //investor
+  rpc AddInvestor(AddInvestorRequest) returns(InvestorResponse);
+  rpc RemoveInvestor(RemoveInvestorRequest) returns(InvestorResponse);
+  rpc AddMoney(MoneyRequest) returns (InvestorResponse);
+  rpc RemoveMoney(MoneyRequest) returns (InvestorResponse);
+  rpc SetMoney(MoneyRequest) returns (InvestorResponse);
+  rpc InvestProject(InvestProjectRequest) returns (InvestorResponse);
+  //category
+  rpc GetAllCategoryList(google.protobuf.Empty) returns(CategoryListResponse);
+  rpc GetSubCategory(CategoryListRequest) returns(SubCategoryListResponse);
+  rpc CreateCategory(CategoryInfoRequest) returns(CategoryInfoResponse);
+  rpc DeleteCategory(DeleteCategoryRequest) returns(google.protobuf.Empty);
+  rpc UpdateCategory(CategoryInfoRequest) returns(google.protobuf.Empty);
 }
 
 message Images {
@@ -45,6 +56,7 @@ message Project {
   repeated Investor investors = 9;
   repeated RoadMap roadmaps = 10;
   uint32 organization_id = 11;
+  int32 categoryId = 12;
 }
 
 message CreateProjectRequest {

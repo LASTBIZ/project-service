@@ -8,7 +8,7 @@ import (
 	"lastbiz/project-service/internal/project/services"
 	"lastbiz/project-service/pkg/logging"
 	"lastbiz/project-service/pkg/postgres"
-	project1 "lastbiz/project-service/pkg/project"
+	"lastbiz/project-service/pkg/project/pb"
 	"net"
 	"time"
 )
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	project1.RegisterProjectServiceServer(grpcServer, projectService)
+	pb.RegisterProjectServiceServer(grpcServer, projectService)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		logging.GetLogger().Fatal(err)
