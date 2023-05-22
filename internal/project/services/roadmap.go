@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	project1 "lastbiz/project-service/internal/project"
+	"lastbiz/project-service/internal/project/models"
 	"lastbiz/project-service/pkg/project"
 	"net/http"
 )
@@ -24,8 +24,8 @@ func (s Service) AddRoadmap(ctx context.Context, req *project.CreateRoadmapReque
 
 	r := req.GetRoadmap()
 
-	createRoadmap := project1.Roadmap{
-		Dates: project1.Date{
+	createRoadmap := models.Roadmap{
+		Dates: models.Date{
 			StartDate: r.GetDates().GetStartDate().AsTime(),
 			EndDate:   r.GetDates().GetEndDate().AsTime(),
 		},

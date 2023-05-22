@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 	"gorm.io/gorm"
-	project1 "lastbiz/project-service/internal/project"
+	"lastbiz/project-service/internal/project/models"
 	"lastbiz/project-service/pkg/project"
 	"net/http"
 	"unsafe"
@@ -40,25 +40,25 @@ func (s Service) CreateProject(ctx context.Context, request *project.CreateProje
 		}, nil
 	}
 
-	roadmaps := make([]project1.Roadmap, 0)
+	roadmaps := make([]models.Roadmap, 0)
 
 	for _, roadMap := range pr.GetRoadmaps() {
-		r := &project1.GRPCRoadmap{
+		r := &models.GRPCRoadmap{
 			RoadMap: roadMap,
 		}
 		roadmaps = append(roadmaps, r.ToRoadmap())
 	}
 
-	createProject := project1.Project{
-		Images: project1.Image{
+	createProject := models.Project{
+		Images: models.Image{
 			MainImageUrl:  pr.Images.GetMainImageUrl(),
 			RoadMapImgUrl: pr.Images.GetRoadmapImgUrl(),
 		},
-		Dates: project1.Date{
+		Dates: models.Date{
 			StartDate: pr.GetDates().GetStartDate().AsTime(),
 			EndDate:   pr.GetDates().GetEndDate().AsTime(),
 		},
-		Budgets: project1.Budget{
+		Budgets: models.Budget{
 			Need:    pr.GetBudgets().GetNeed(),
 			Current: 0,
 		},
@@ -143,24 +143,24 @@ func (s Service) UpdateProject(ctx context.Context, request *project.UpdateProje
 		}, nil
 	}
 
-	roadmaps := make([]project1.Roadmap, 0)
+	roadmaps := make([]models.Roadmap, 0)
 
 	for _, roadMap := range pr.GetRoadmaps() {
-		r := *(*project1.GRPCRoadmap)(unsafe.Pointer(roadMap))
+		r := *(*models.GRPCRoadmap)(unsafe.Pointer(roadMap))
 		roadmaps = append(roadmaps, r.ToRoadmap())
 	}
 
-	createProject := project1.Project{
+	createProject := models.Project{
 		ID: pr.GetId(),
-		Images: project1.Image{
+		Images: models.Image{
 			MainImageUrl:  pr.Images.GetMainImageUrl(),
 			RoadMapImgUrl: pr.Images.GetRoadmapImgUrl(),
 		},
-		Dates: project1.Date{
+		Dates: models.Date{
 			StartDate: pr.GetDates().GetStartDate().AsTime(),
 			EndDate:   pr.GetDates().GetEndDate().AsTime(),
 		},
-		Budgets: project1.Budget{
+		Budgets: models.Budget{
 			Need:    pr.GetBudgets().GetNeed(),
 			Current: 0,
 		},
