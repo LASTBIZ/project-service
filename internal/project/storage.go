@@ -87,3 +87,5 @@ func (s Storage) DeleteRoadmap(roadmapID uint32) error {
 		Delete(&models.Roadmap{}).
 		Error
 }
+
+//todo category
