@@ -15,7 +15,7 @@ type Project struct {
 	Location      string
 	Name          string
 	Description   string `gorm:"type:text"`
-	CategoryID    string `gorm:"not null"`
+	CategoryID    uint64 `gorm:"not null"`
 	Investors     []Investor
 	Roadmaps      []RoadMap
 }
@@ -25,7 +25,7 @@ type ProjectRepo interface {
 	DeleteProject(ctx context.Context, id uint64) (bool, error)
 	UpdateProject(ctx context.Context, project *Project) (bool, error)
 	GetProjectById(ctx context.Context, id uint64) (*Project, error)
-	GetProjectByCategoryID(ctx context.Context, categoryID uint64) ([]*Project, error)
+	GetProjectByCategoryID(ctx context.Context, categoryID uint64, pageNum, pageSize int) ([]*Project, int, error)
 }
 
 type ProjectUseCase struct {
@@ -38,21 +38,21 @@ func NewProjectUseCase(repo ProjectRepo, logger log.Logger) *ProjectUseCase {
 }
 
 func (up *ProjectUseCase) Create(ctx context.Context, p *Project) (*Project, error) {
-	return up.Create(ctx, p)
+	return up.repo.CreateProject(ctx, p)
 }
 
 func (up *ProjectUseCase) Update(ctx context.Context, p *Project) (bool, error) {
-	return up.Update(ctx, p)
+	return up.repo.UpdateProject(ctx, p)
 }
 
 func (up *ProjectUseCase) Delete(ctx context.Context, id uint64) (bool, error) {
-	return up.Delete(ctx, id)
+	return up.repo.DeleteProject(ctx, id)
 }
 
 func (up *ProjectUseCase) GetProjectById(ctx context.Context, id uint64) (*Project, error) {
-	return up.GetProjectById(ctx, id)
+	return up.repo.GetProjectById(ctx, id)
 }
 
-func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, categoryID uint64) ([]*Project, error) {
-	return up.GetProjectByCategoryId(ctx, categoryID)
+func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, categoryID uint64, pageNum, pageSize int) ([]*Project, int, error) {
+	return up.repo.GetProjectByCategoryID(ctx, categoryID, pageNum, pageSize)
 }
