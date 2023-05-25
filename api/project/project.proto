@@ -2,16 +2,34 @@ syntax = "proto3";
 
 package api.project;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "project-service/api/project;project";
 option java_multiple_files = true;
 option java_package = "api.project";
 
 service Project {
-	rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply);
-	rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply);
-	rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
+	rpc CreateProject (CreateProjectRequest) returns (google.protobuf.Empty);
+	rpc UpdateProject (UpdateProjectRequest) returns (google.protobuf.Empty);
+	rpc DeleteProject (DeleteProjectRequest) returns (google.protobuf.Empty);
 	rpc GetProject (GetProjectRequest) returns (GetProjectReply);
 	rpc ListProject (ListProjectRequest) returns (ListProjectReply);
+
+	rpc AddRoadMap (CreateRoadmapRequest) returns (google.protobuf.Empty);
+	rpc RemoveRoadMap (RemoveRoadmapRequest) returns (google.protobuf.Empty);
+
+	rpc CreateInvestor (CreateInvestorRequest) returns (google.protobuf.Empty);
+	rpc DeleteInvestor (DeleteCategoryRequest) returns (google.protobuf.Empty);
+	rpc AddMoneyInvestor (AddMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc RemoveMoneyInvestor (RemoveMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc SetMoneyInvestor (SetMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
+
+	rpc GetAllCategoryList (google.protobuf.Empty) returns (CategoryListResponse);
+	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListResponse);
+	rpc CreateCategory (CreateCategoryRequest) returns (google.protobuf.Empty);
+	rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
+	rpc UpdateCategory (CategoryInfoRequest) returns (google.protobuf.Empty);
 }
 
 message CreateProjectRequest {}
@@ -28,3 +46,59 @@ message GetProjectReply {}
 
 message ListProjectRequest {}
 message ListProjectReply {}
+
+message CreateRoadmapRequest {
+
+}
+
+message RemoveRoadmapRequest {
+
+}
+
+message CreateInvestorRequest {
+
+}
+
+message DeleteInvestorRequest {
+
+}
+
+message AddMoneyInvestorRequest {
+
+}
+
+message RemoveMoneyInvestorRequest {
+
+}
+
+message SetMoneyInvestorRequest {
+
+}
+
+message InvestProjectRequest {
+
+}
+
+message CategoryListResponse {
+
+}
+
+message CategoryListRequest {
+
+}
+
+message CategoryInfoRequest {
+
+}
+
+message SubCategoryListResponse {
+
+}
+
+message CreateCategoryRequest {
+
+}
+
+message DeleteCategoryRequest {
+
+}
