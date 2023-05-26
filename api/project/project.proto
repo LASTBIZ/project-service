@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.project;
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "project-service/api/project;project";
 option java_multiple_files = true;
@@ -13,53 +14,84 @@ service Project {
 	rpc UpdateProject (UpdateProjectRequest) returns (google.protobuf.Empty);
 	rpc DeleteProject (DeleteProjectRequest) returns (google.protobuf.Empty);
 	rpc GetProject (GetProjectRequest) returns (GetProjectReply);
-//	rpc ListProject (ListProjectRequest) returns (ListProjectReply);
+	rpc GetProjectByCategoryID (ListProjectRequest) returns (ListProjectReply);
+	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
 }
 
-message CreateProjectRequest {}
-message CreateProjectReply {}
-
-message UpdateProjectRequest {}
-message UpdateProjectReply {}
-
-message DeleteProjectRequest {}
-message DeleteProjectReply {}
-
-message GetProjectRequest {}
-message GetProjectReply {}
-
-//message ListProjectRequest {}
-//message ListProjectReply {}
-
-message CreateRoadmapRequest {
-
+message CreateProjectRequest {
+	string roadmap_img_url = 1;
+	string main_image_url = 2;
+	google.protobuf.Timestamp startDate = 3;
+	google.protobuf.Timestamp endDate = 4;
+	string location = 5;
+	string name = 6;
+	string description = 7;
+	uint32 category_id = 8;
+	uint64 need_budget = 9;
 }
 
-message RemoveRoadmapRequest {
-
+message UpdateProjectRequest {
+	string roadmap_img_url = 1;
+	string main_image_url = 2;
+	google.protobuf.Timestamp startDate = 3;
+	google.protobuf.Timestamp endDate = 4;
+	string location = 5;
+	string name = 6;
+	string description = 7;
+	uint32 category_id = 8;
+	uint64 need_budget = 9;
+	uint64 id = 10;
 }
 
-message CreateInvestorRequest {
-
+message DeleteProjectRequest {
+	uint64 id = 1;
 }
 
-message DeleteInvestorRequest {
-
+message GetProjectRequest {
+	uint64 id = 1;
 }
 
-message AddMoneyInvestorRequest {
-
+message GetProjectReply {
+	string roadmap_img_url = 1;
+	string main_image_url = 2;
+	google.protobuf.Timestamp startDate = 3;
+	google.protobuf.Timestamp endDate = 4;
+	string location = 5;
+	string name = 6;
+	string description = 7;
+	uint32 category_id = 8;
+	uint64 need_budget = 9;
+	uint32 id = 10;
 }
 
-message RemoveMoneyInvestorRequest {
-
+message ListProjectRequest {
+	string keywords = 1;
+	uint32 pageNum = 2;
+	uint32 pageSize = 3;
+	uint32 category_id = 4;
 }
 
-message SetMoneyInvestorRequest {
+message ListProjectReply {
+	repeated ProjectInfoResponse projects = 1;
+	uint32 total = 2;
+}
 
+message ProjectInfoResponse {
+	message Category {
+		uint32 id = 1;
+		string name = 2;
+	}
+	string main_image_url = 1;
+	google.protobuf.Timestamp startDate = 2;
+	google.protobuf.Timestamp endDate = 3;
+	string location = 4;
+	string name = 5;
+	uint32 category_id = 6;
+	uint64 id = 7;
 }
 
 message InvestProjectRequest {
-
+	uint64 id = 1;
+	uint64 investor_id = 2;
+	uint32 money = 3;
 }
-

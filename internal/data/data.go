@@ -17,7 +17,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewTransaction, NewProjectRepo, NewInvestorRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewTransaction, NewProjectRepo, NewInvestorRepo, NewRoadmapRepo, NewCategoryRepo)
 
 // Data .
 type Data struct {
@@ -73,5 +73,6 @@ func NewDB(c *conf.Data) *gorm.DB {
 		log.Errorf("failed opening connection to postgres: %v", err)
 		panic("failed to connect database")
 	}
+	db.AutoMigrate(&Project{}, &Category{}, &Investor{}, &RoadMap{})
 	return db
 }

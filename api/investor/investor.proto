@@ -14,20 +14,43 @@ service Investor {
 	rpc AddMoneyInvestor (AddMoneyInvestorRequest) returns (google.protobuf.Empty);
 	rpc RemoveMoneyInvestor (RemoveMoneyInvestorRequest) returns (google.protobuf.Empty);
 	rpc SetMoneyInvestor (SetMoneyInvestorRequest) returns (google.protobuf.Empty);
-	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
+	rpc ListInvestor (ListInvestorRequest) returns (ListInvestorReply);
 }
 
-message CreateInvestorRequest {}
-message CreateInvestorReply {}
+message ListInvestorRequest {
+	uint64 project_id = 1;
+	uint32 pageNum = 2;
+	uint32 pageSize = 3;
+}
 
-message UpdateInvestorRequest {}
-message UpdateInvestorReply {}
+message ListInvestorReply {
+	message Investor {
+		string full_name = 1;
+	}
+	repeated Investor investors = 1;
+	int32 total = 2;
+}
 
-message DeleteInvestorRequest {}
-message DeleteInvestorReply {}
+message CreateInvestorRequest {
+	string full_name = 1;
+	uint64 user_id = 2;
+}
 
-message GetInvestorRequest {}
-message GetInvestorReply {}
+message AddMoneyInvestorRequest {
+	int32 money = 1;
+	uint64 user_id = 2;
+}
 
-message ListInvestorRequest {}
-message ListInvestorReply {}
+message RemoveMoneyInvestorRequest {
+	int32 money = 1;
+	uint64 user_id = 2;
+}
+
+message SetMoneyInvestorRequest {
+	int32 money = 1;
+	uint64 user_id = 2;
+}
+
+message DeleteInvestorRequest {
+	uint64 id = 1;
+}

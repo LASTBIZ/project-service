@@ -97,6 +97,7 @@ func (p projectRepo) UpdateProject(ctx context.Context, project *biz.Project) (b
 	projectInfo.Location = project.Location
 	projectInfo.Name = project.Name
 	projectInfo.Description = project.Description
+	projectInfo.NeedBudget = project.NeedBudget
 	projectInfo.CategoryID = project.CategoryID
 
 	if err := p.data.db.Save(&projectInfo); err != nil {
@@ -118,24 +119,6 @@ func (p projectRepo) GetProjectById(ctx context.Context, id uint64) (*biz.Projec
 
 	re := p.modelToResponse(projectInfo)
 	return re, nil
-}
-
-func paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		if page == 0 {
-			page = 1
-		}
-
-		switch {
-		case pageSize > 100:
-			pageSize = 100
-		case pageSize <= 0:
-			pageSize = 10
-		}
-
-		offset := (page - 1) * pageSize
-		return db.Offset(offset).Limit(pageSize)
-	}
 }
 
 func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint32, keyWords string, pageNum, pageSize int) ([]*biz.Project, int, error) {

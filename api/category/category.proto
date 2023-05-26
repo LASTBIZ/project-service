@@ -10,42 +10,40 @@ option java_package = "api.category";
 
 service Category {
 	rpc GetAllCategoryList (google.protobuf.Empty) returns (CategoryListReply);
-	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListReply);
+//	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListReply);
 	rpc CreateCategory (CreateCategoryRequest) returns (google.protobuf.Empty);
 	rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
 	rpc UpdateCategory (CategoryInfoRequest) returns (google.protobuf.Empty);
 }
 
 message CategoryListReply {
-	message Project {
-		uint64 id = 1;
-		string name = 2;
-		string description = 3;
-		string MainImageUrl = 4;
-	}
-	repeated Project project = 1;
-	uint32 total = 2;
+	string json_data = 1;
 }
 
-message CategoryListRequest {
-	int32 level = 1;
-	int32 id = 2;
-	int32 pageNum = 3;
-	int32 pageSize = 4;
-}
+//message CategoryListRequest {
+//	int32 level = 1;
+//	int32 id = 2;
+//	int32 pageNum = 3;
+//	int32 pageSize = 4;
+//}
 
 message CategoryInfoRequest {
-
+	uint32 id = 1;
+	string name = 2;
+	int32 level = 3;
+	optional int32 parent_id = 4;
 }
 
-message SubCategoryListReply {
-
-}
+//message SubCategoryListReply {
+//
+//}
 
 message CreateCategoryRequest {
-
+	string name = 1;
+	int32 level = 2;
+	optional int32 parent_id = 3;
 }
 
 message DeleteCategoryRequest {
-
+	uint32 id = 1;
 }
