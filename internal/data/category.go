@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"project-service/internal/biz"
@@ -11,7 +11,7 @@ import (
 type Category struct {
 	ID               uint32      `gorm:"primaryKey; not null; unique_index" json:"id"`
 	Name             string      `gorm:"type:varchar(50);not null" json:"name"`
-	ParentCategoryID int32       `json:"parent_id"`
+	ParentCategoryID uint32      `json:"parent_id"`
 	ParentCategory   *Category   `json:"-"`
 	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"`
 	Projects         []Project
@@ -32,42 +32,99 @@ type Result struct {
 	Name string
 }
 
-func (c categoryRepo) GetAllCategories(ctx context.Context, level, id int32) ([]*biz.Category, error) {
-	var subQuery string
-	if level == 1 {
-		subQuery = fmt.Sprintf("SELECT id, name FROM categories WHERE parent_category_id IN (SELECT id, name FROM categories WHERE parent_category_id=%d)", id)
-	} else if level == 2 {
-		subQuery = fmt.Sprintf("SELECT id, name FROM categories WHERE parent_category_id=%d", id)
-	} else if level == 3 {
-		subQuery = fmt.Sprintf("SELECT id, name FROM categories WHERE id=%d", id)
-	}
-
-	var results []Result
-	if err := c.data.db.Table("categories").Model(Category{}).Raw(subQuery).Scan(&results).Error; err != nil {
-		return nil, errors.InternalServer("CATEGORY_ERROR", "category get errors")
-	}
-	for _, re := range results {
-		categoryIds = append(categoryIds, re.ID)
-	}
-	return results, nil
-}
-
-func (c categoryRepo) GetSubCategory(ctx context.Context, parentId uint32) ([]*biz.Category, error) {
-	//TODO implement me
-	panic("implement me")
+func (c categoryRepo) GetAllCategories(ctx context.Context) (string, error) {
+	/*
+		[
+			{
+				"id":xxx,
+				"name":"",
+				"level":1,
+				"parent":13xxx,
+				"sub_category":[
+					"id":xxx,
+					"name":"",
+					"level":1,
+					"is_tab":false,
+					"sub_category":[]
+				]
+			}
+		]
+	*/
+	var categories []Category
+	c.data.db.Where(&Category{Level: 1}).Preload("SubCategory.SubCategory").Find(&categories)
+	b, _ := json.Marshal(&categories)
+	return string(b), nil
 }
 
 func (c categoryRepo) CreateCategory(ctx context.Context, category *biz.Category) (*biz.Category, error) {
-	//TODO implement me
-	panic("implement me")
+	cMap := Category{}
+	cMap.Name = category.Name
+	cMap.Level = category.Level
+	if category.Level != 1 {
+		var categories Category
+		if res := c.data.db.First(&categories, category.ParentCategoryID); res.RowsAffected == 0 {
+			return nil, errors.NotFound("CATEGORY_NOT_FOUND", "商品分类不存在")
+		}
+		cMap.ParentCategoryID = category.ParentCategoryID
+	}
+
+	result := c.data.db.Model(&Category{}).Create(cMap)
+	if result.Error != nil {
+		return nil, errors.InternalServer("CATEGORY_CREATE_ERROR", result.Error.Error())
+	}
+
+	return &biz.Category{
+		Name:             cMap.Name,
+		ParentCategoryID: cMap.ParentCategoryID,
+		Level:            cMap.Level,
+	}, nil
 }
 
 func (c categoryRepo) DeleteCategory(ctx context.Context, id uint32) error {
-	//TODO implement me
-	panic("implement me")
+	if res := c.data.db.Delete(&Category{}, id); res.RowsAffected == 0 {
+		return errors.InternalServer("DELETE_CATEGORY_ERROR", res.Error.Error())
+	}
+	return nil
 }
 
-func (c categoryRepo) UpdateCategory(ctx context.Context, category *biz.Category) error {
-	//TODO implement me
-	panic("implement me")
+func (c categoryRepo) UpdateCategory(ctx context.Context, cat *biz.Category) error {
+	var category Category
+	if result := c.data.db.First(&category, cat.ID); result.RowsAffected == 0 {
+		return errors.NotFound("CATEGORY_NOT_FOUND", "category not found")
+	}
+
+	if cat.Name != "" {
+		category.Name = cat.Name
+	}
+	if cat.ParentCategoryID != 0 {
+		category.ParentCategoryID = cat.ParentCategoryID
+	}
+	if cat.Level != 0 {
+		category.Level = cat.Level
+	}
+	result := c.data.db.Save(&category)
+	if result.Error != nil {
+		return errors.InternalServer("CATEGORY_UPDATE_ERROR", "error update category")
+	}
+	return nil
 }
+
+//func ModelToResponseCategory(cat Category) *biz.Category {
+//	catInfoRsp := &biz.Category{
+//		ID:               cat.ID,
+//		Name:             cat.Name,
+//		Level:            cat.Level,
+//		ParentCategoryID: uint32(cat.ParentCategoryID),
+//	}
+//	if cat.ParentCategory != nil {
+//		catInfoRsp.ParentCategory = ModelToResponseCategory(*cat.ParentCategory)
+//	}
+//	subCategory := make([]*biz.Category, 0)
+//	for _, cv := range cat.SubCategory {
+//		if cv != nil {
+//			subCategory = append(subCategory, ModelToResponseCategory(*cv))
+//		}
+//	}
+//	catInfoRsp.SubCategory = subCategory
+//	return catInfoRsp
+//}

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package api.investor;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "project-service/api/investor;investor";
 option java_multiple_files = true;
 option java_package = "api.investor";

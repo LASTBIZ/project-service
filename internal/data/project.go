@@ -2,15 +2,18 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
 	"project-service/internal/biz"
+	"project-service/internal/utils"
 	"time"
 )
 
 type Project struct {
-	ID            uint64 `gorm:"primaryKey"`
+	ID uint64 `gorm:"primaryKey"`
+	//TODO gormlist string[]
 	RoadMapImgURL string
 	MainImageUrl  string
 	StartDate     time.Time
@@ -19,7 +22,10 @@ type Project struct {
 	Name          string
 	Description   string `gorm:"type:text"`
 	CategoryID    uint32 `gorm:"not null"`
-	Investors     []Investor
+	CurrentBudget uint64
+	NeedBudget    uint64
+	Category      Category
+	Investors     []Investor `gorm:"many2many:project_investors;"`
 	Roadmaps      []RoadMap
 }
 
@@ -42,6 +48,8 @@ func (p projectRepo) CreateProject(ctx context.Context, project *biz.Project) (*
 	pr.Name = project.Name
 	pr.Description = project.Description
 	pr.CategoryID = project.CategoryID
+	pr.NeedBudget = project.NeedBudget
+	pr.CurrentBudget = 0
 	//TODO add roadmaps ?
 	res := p.data.db.Create(&pr)
 	if res.Error != nil {
@@ -130,9 +138,34 @@ func paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*biz.Project, int, error) {
+func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint32, keyWords string, pageNum, pageSize int) ([]*biz.Project, int, error) {
 	var projectsInfo []Project
-	result := p.data.db.Where(&Project{CategoryID: categoryID}).Find(&projectsInfo)
+	localDB := p.data.db.Model(&Project{})
+	if keyWords != "" {
+		//queryMap["name"] = "%" + req.KeyWords + "%"
+		localDB = localDB.Where("name LIKE ?", "%"+keyWords+"%")
+	}
+
+	var subQuery string
+	if categoryID > 0 {
+		var category Category
+		if result := p.data.db.First(&category, categoryID); result.RowsAffected == 0 {
+			return nil, 0, errors.NotFound("CATEGORY_NOT_FOUND", "error not found category")
+		}
+
+		if category.Level == 1 {
+			subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category WHERE parent_category_id=%d)", categoryID)
+		} else if category.Level == 2 {
+			subQuery = fmt.Sprintf("select id from category WHERE parent_category_id=%d", categoryID)
+		} else if category.Level == 3 {
+			subQuery = fmt.Sprintf("select id from category WHERE id=%d", categoryID)
+		}
+		localDB = localDB.Where(fmt.Sprintf("category_id in (%s)", subQuery))
+	}
+	var count int64
+	localDB.Count(&count)
+
+	result := localDB.Preload("Category").Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
@@ -141,13 +174,54 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
 
-	total := int(result.RowsAffected)
 	p.data.db.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	rv := make([]*biz.Project, 0)
 	for _, u := range projectsInfo {
 		rv = append(rv, p.modelToResponse(u))
 	}
-	return rv, total, nil
+	return rv, int(count), nil
+}
+
+func (p projectRepo) InvestProject(ctx context.Context, id uint64, investorID uint64, money int) error {
+	var projectInfo Project
+	if err := p.data.db.Where(&Project{ID: id}).First(&projectInfo).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.NotFound("PROJECT_NOT_FOUND", "project not found")
+		}
+		return errors.NotFound("PROJECT_NOT_FOUND", err.Error())
+	}
+
+	var investor Investor
+	if err := p.data.db.Where(&Investor{ID: investorID}).Preload("Project").First(&investor).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.NotFound("INVESTOR_NOT_FOUND", "investor not found")
+		}
+		return errors.NotFound("INVESTOR_NOT_FOUND", err.Error())
+	}
+
+	if investor.Money < uint64(money) {
+		return errors.Conflict("NOT_ENOUGH_MONEY", "not enough money")
+	}
+
+	ids := make([]int, 0)
+	for _, u := range investor.Projects {
+		ids = append(ids, int(u.ID))
+	}
+
+	if !utils.Contains(ids, int(id)) {
+		investor.Projects = append(investor.Projects, &projectInfo)
+	}
+
+	investor.Money -= uint64(money)
+	if err := p.data.db.Save(&investor).Error; err != nil {
+		return errors.InternalServer("ERROR_INVEST_PROJECT", "error invest project")
+	}
+	projectInfo.CurrentBudget += uint64(money)
+	if err := p.data.db.Save(&projectInfo).Error; err != nil {
+		return errors.InternalServer("ERROR_INVEST_PROJECT", "error invest project")
+	}
+
+	return nil
 }
 
 func (p projectRepo) modelToResponse(project Project) *biz.Project {
@@ -161,6 +235,10 @@ func (p projectRepo) modelToResponse(project Project) *biz.Project {
 		Name:          project.Name,
 		Description:   project.Description,
 		CategoryID:    project.CategoryID,
+		Category: biz.Category{
+			ID:   project.Category.ID,
+			Name: project.Category.Name,
+		},
 	}
 
 	return projectInfoRsp

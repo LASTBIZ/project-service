@@ -10,11 +10,11 @@ import (
 )
 
 type Investor struct {
-	ID        uint64 `gorm:"primaryKey"`
-	Money     uint64
-	FullName  string
-	UserID    uint32
-	ProjectID *uint64
+	ID       uint64 `gorm:"primaryKey"`
+	Money    uint64
+	FullName string
+	UserID   uint32
+	Projects []*Project `gorm:"many2many:project_investors;"`
 }
 
 type investorRepo struct {
@@ -80,7 +80,7 @@ func (i investorRepo) GetInvestorById(ctx context.Context, id uint64) (*biz.Inve
 
 func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*biz.Investor, int, error) {
 	var investorsInfo []Investor
-	result := i.data.db.Where(&Investor{ProjectID: projectId}).Find(&investorsInfo)
+	result := i.data.db.Joins("JOIN project_investors pi ON pi.investor_id = investors.id").Where("pi.id = ?", user.ID).Find(&investorsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("INVESTOR_NOT_FOUND", "investor not found")

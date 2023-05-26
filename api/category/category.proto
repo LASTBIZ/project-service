@@ -17,11 +17,21 @@ service Category {
 }
 
 message CategoryListReply {
-
+	message Project {
+		uint64 id = 1;
+		string name = 2;
+		string description = 3;
+		string MainImageUrl = 4;
+	}
+	repeated Project project = 1;
+	uint32 total = 2;
 }
 
 message CategoryListRequest {
-
+	int32 level = 1;
+	int32 id = 2;
+	int32 pageNum = 3;
+	int32 pageSize = 4;
 }
 
 message CategoryInfoRequest {

@@ -7,15 +7,18 @@ import (
 )
 
 type Project struct {
-	ID            uint64 `gorm:"primaryKey"`
+	ID            uint64
 	RoadMapImgURL string
 	MainImageUrl  string
 	StartDate     time.Time
 	EndDate       time.Time
 	Location      string
 	Name          string
-	Description   string `gorm:"type:text"`
-	CategoryID    uint32 `gorm:"not null"`
+	Description   string
+	CategoryID    uint32
+	Category      Category
+	CurrentBudget uint64
+	NeedBudget    uint64
 	Investors     []Investor
 	Roadmaps      []RoadMap
 }
@@ -25,7 +28,8 @@ type ProjectRepo interface {
 	DeleteProject(ctx context.Context, id uint64) (bool, error)
 	UpdateProject(ctx context.Context, project *Project) (bool, error)
 	GetProjectById(ctx context.Context, id uint64) (*Project, error)
-	GetProjectByCategoryID(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error)
+	GetProjectByCategoryID(ctx context.Context, categoryID uint32, keyWords string, pageNum, pageSize int) ([]*Project, int, error)
+	InvestProject(ctx context.Context, id uint64, investorID uint64, money int) error
 }
 
 type ProjectUseCase struct {
@@ -53,6 +57,6 @@ func (up *ProjectUseCase) GetProjectById(ctx context.Context, id uint64) (*Proje
 	return up.repo.GetProjectById(ctx, id)
 }
 
-func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error) {
-	return up.repo.GetProjectByCategoryID(ctx, categoryID, pageNum, pageSize)
+func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, keywords string, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error) {
+	return up.repo.GetProjectByCategoryID(ctx, categoryID, keywords, pageNum, pageSize)
 }
