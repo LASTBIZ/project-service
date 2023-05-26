@@ -13,23 +13,7 @@ service Project {
 	rpc UpdateProject (UpdateProjectRequest) returns (google.protobuf.Empty);
 	rpc DeleteProject (DeleteProjectRequest) returns (google.protobuf.Empty);
 	rpc GetProject (GetProjectRequest) returns (GetProjectReply);
-	rpc ListProject (ListProjectRequest) returns (ListProjectReply);
-
-	rpc AddRoadMap (CreateRoadmapRequest) returns (google.protobuf.Empty);
-	rpc RemoveRoadMap (RemoveRoadmapRequest) returns (google.protobuf.Empty);
-
-	rpc CreateInvestor (CreateInvestorRequest) returns (google.protobuf.Empty);
-	rpc DeleteInvestor (DeleteCategoryRequest) returns (google.protobuf.Empty);
-	rpc AddMoneyInvestor (AddMoneyInvestorRequest) returns (google.protobuf.Empty);
-	rpc RemoveMoneyInvestor (RemoveMoneyInvestorRequest) returns (google.protobuf.Empty);
-	rpc SetMoneyInvestor (SetMoneyInvestorRequest) returns (google.protobuf.Empty);
-	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
-
-	rpc GetAllCategoryList (google.protobuf.Empty) returns (CategoryListResponse);
-	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListResponse);
-	rpc CreateCategory (CreateCategoryRequest) returns (google.protobuf.Empty);
-	rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
-	rpc UpdateCategory (CategoryInfoRequest) returns (google.protobuf.Empty);
+//	rpc ListProject (ListProjectRequest) returns (ListProjectReply);
 }
 
 message CreateProjectRequest {}
@@ -44,8 +28,8 @@ message DeleteProjectReply {}
 message GetProjectRequest {}
 message GetProjectReply {}
 
-message ListProjectRequest {}
-message ListProjectReply {}
+//message ListProjectRequest {}
+//message ListProjectReply {}
 
 message CreateRoadmapRequest {
 
@@ -79,26 +63,3 @@ message InvestProjectRequest {
 
 }
 
-message CategoryListResponse {
-
-}
-
-message CategoryListRequest {
-
-}
-
-message CategoryInfoRequest {
-
-}
-
-message SubCategoryListResponse {
-
-}
-
-message CreateCategoryRequest {
-
-}
-
-message DeleteCategoryRequest {
-
-}

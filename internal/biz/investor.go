@@ -17,11 +17,10 @@ type InvestorRepo interface {
 	CreateInvestor(ctx context.Context, investor *Investor) (*Investor, error)
 	DeleteInvestor(ctx context.Context, id uint64) (bool, error)
 	GetInvestorById(ctx context.Context, id uint64) (*Investor, error)
-	ListInvestorByProjectId(ctx context.Context, projectId uint64, pageNum, pageSize int) ([]*Investor, error)
+	ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*Investor, int, error)
 	AddMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
 	RemoveMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
 	SetMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
-	InvestProject(ctx context.Context, money int, id, projectId uint64) (bool, error)
 }
 
 type InvestorUseCase struct {

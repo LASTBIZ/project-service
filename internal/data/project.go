@@ -18,7 +18,7 @@ type Project struct {
 	Location      string
 	Name          string
 	Description   string `gorm:"type:text"`
-	CategoryID    uint64 `gorm:"not null"`
+	CategoryID    uint32 `gorm:"not null"`
 	Investors     []Investor
 	Roadmaps      []RoadMap
 }
@@ -130,7 +130,7 @@ func paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint64, pageNum, pageSize int) ([]*biz.Project, int, error) {
+func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*biz.Project, int, error) {
 	var projectsInfo []Project
 	result := p.data.db.Where(&Project{CategoryID: categoryID}).Find(&projectsInfo)
 	if err := result.Error; err != nil {
@@ -161,7 +161,6 @@ func (p projectRepo) modelToResponse(project Project) *biz.Project {
 		Name:          project.Name,
 		Description:   project.Description,
 		CategoryID:    project.CategoryID,
-		//TODO investors and roadmaps
 	}
 
 	return projectInfoRsp

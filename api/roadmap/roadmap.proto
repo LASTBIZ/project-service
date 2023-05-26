@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.roadmap;
+
+option go_package = "project-service/api/roadmap;roadmap";
+option java_multiple_files = true;
+option java_package = "api.roadmap";
+
+service Roadmap {
+	rpc AddRoadMap (CreateRoadmapRequest) returns (google.protobuf.Empty);
+	rpc RemoveRoadMap (RemoveRoadmapRequest) returns (google.protobuf.Empty);
+	rpc ListRoadmap (ListRoadmapRequest) returns (google.protobuf.Empty);
+}
+
+message CreateRoadmapRequest {}
+message CreateRoadmapReply {}
+
+message UpdateRoadmapRequest {}
+message UpdateRoadmapReply {}
+
+message DeleteRoadmapRequest {}
+message DeleteRoadmapReply {}
+
+message GetRoadmapRequest {}
+message GetRoadmapReply {}
+
+message ListRoadmapRequest {}
+message ListRoadmapReply {}

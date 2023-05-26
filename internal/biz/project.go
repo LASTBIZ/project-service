@@ -15,7 +15,7 @@ type Project struct {
 	Location      string
 	Name          string
 	Description   string `gorm:"type:text"`
-	CategoryID    uint64 `gorm:"not null"`
+	CategoryID    uint32 `gorm:"not null"`
 	Investors     []Investor
 	Roadmaps      []RoadMap
 }
@@ -25,7 +25,7 @@ type ProjectRepo interface {
 	DeleteProject(ctx context.Context, id uint64) (bool, error)
 	UpdateProject(ctx context.Context, project *Project) (bool, error)
 	GetProjectById(ctx context.Context, id uint64) (*Project, error)
-	GetProjectByCategoryID(ctx context.Context, categoryID uint64, pageNum, pageSize int) ([]*Project, int, error)
+	GetProjectByCategoryID(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error)
 }
 
 type ProjectUseCase struct {
@@ -53,6 +53,6 @@ func (up *ProjectUseCase) GetProjectById(ctx context.Context, id uint64) (*Proje
 	return up.repo.GetProjectById(ctx, id)
 }
 
-func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, categoryID uint64, pageNum, pageSize int) ([]*Project, int, error) {
+func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error) {
 	return up.repo.GetProjectByCategoryID(ctx, categoryID, pageNum, pageSize)
 }

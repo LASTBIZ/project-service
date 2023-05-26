@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package api.investor;
+
+option go_package = "project-service/api/investor;investor";
+option java_multiple_files = true;
+option java_package = "api.investor";
+
+service Investor {
+	rpc CreateInvestor (CreateInvestorRequest) returns (google.protobuf.Empty);
+	rpc DeleteInvestor (DeleteInvestorRequest) returns (google.protobuf.Empty);
+	rpc AddMoneyInvestor (AddMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc RemoveMoneyInvestor (RemoveMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc SetMoneyInvestor (SetMoneyInvestorRequest) returns (google.protobuf.Empty);
+	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
+}
+
+message CreateInvestorRequest {}
+message CreateInvestorReply {}
+
+message UpdateInvestorRequest {}
+message UpdateInvestorReply {}
+
+message DeleteInvestorRequest {}
+message DeleteInvestorReply {}
+
+message GetInvestorRequest {}
+message GetInvestorReply {}
+
+message ListInvestorRequest {}
+message ListInvestorReply {}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package api.category;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "project-service/api/category;category";
+option java_multiple_files = true;
+option java_package = "api.category";
+
+service Category {
+	rpc GetAllCategoryList (google.protobuf.Empty) returns (CategoryListReply);
+	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListReply);
+	rpc CreateCategory (CreateCategoryRequest) returns (google.protobuf.Empty);
+	rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
+	rpc UpdateCategory (CategoryInfoRequest) returns (google.protobuf.Empty);
+}
+
+message CategoryListReply {
+
+}
+
+message CategoryListRequest {
+
+}
+
+message CategoryInfoRequest {
+
+}
+
+message SubCategoryListReply {
+
+}
+
+message CreateCategoryRequest {
+
+}
+
+message DeleteCategoryRequest {
+
+}
