@@ -9,7 +9,7 @@ type Investor struct {
 	ID        uint64
 	Money     uint64
 	FullName  string
-	UserID    uint32
+	UserID    uint64
 	ProjectID *uint64
 }
 
@@ -30,4 +30,32 @@ type InvestorUseCase struct {
 
 func NewInvestorUseCase(repo InvestorRepo, logger log.Logger) *InvestorUseCase {
 	return &InvestorUseCase{repo: repo, log: log.NewHelper(logger)}
+}
+
+func (iu *InvestorUseCase) CreateInvestor(ctx context.Context, investor *Investor) (*Investor, error) {
+	return iu.repo.CreateInvestor(ctx, investor)
+}
+
+func (iu *InvestorUseCase) DeleteInvestor(ctx context.Context, id uint64) (bool, error) {
+	return iu.repo.DeleteInvestor(ctx, id)
+}
+
+func (iu *InvestorUseCase) GetInvestorById(ctx context.Context, id uint64) (*Investor, error) {
+	return iu.repo.GetInvestorById(ctx, id)
+}
+
+func (iu *InvestorUseCase) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*Investor, int, error) {
+	return iu.repo.ListInvestorByProjectId(ctx, projectId, pageNum, pageSize)
+}
+
+func (iu *InvestorUseCase) AddMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error) {
+	return iu.repo.AddMoneyInvestor(ctx, money, id)
+}
+
+func (iu *InvestorUseCase) RemoveMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error) {
+	return iu.repo.RemoveMoneyInvestor(ctx, money, id)
+}
+
+func (iu *InvestorUseCase) SetMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error) {
+	return iu.repo.SetMoneyInvestor(ctx, money, id)
 }

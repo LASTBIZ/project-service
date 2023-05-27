@@ -25,8 +25,16 @@ type Project struct {
 	CurrentBudget uint64
 	NeedBudget    uint64
 	Category      Category
-	Investors     []Investor `gorm:"many2many:project_investors;"`
+	Investors     []InvestProject
 	Roadmaps      []RoadMap
+}
+
+type InvestProject struct {
+	ID         uint64 `gorm:"primaryKey"`
+	ProjectID  uint64
+	InvestorID uint64
+	Investor   Investor
+	Money      uint64
 }
 
 type projectRepo struct {
@@ -50,7 +58,6 @@ func (p projectRepo) CreateProject(ctx context.Context, project *biz.Project) (*
 	pr.CategoryID = project.CategoryID
 	pr.NeedBudget = project.NeedBudget
 	pr.CurrentBudget = 0
-	//TODO add roadmaps ?
 	res := p.data.db.Create(&pr)
 	if res.Error != nil {
 		return nil, errors.InternalServer("CREATE_PROJECT_ERROR", "error create project")
@@ -190,21 +197,43 @@ func (p projectRepo) InvestProject(ctx context.Context, id uint64, investorID ui
 	for _, u := range investor.Projects {
 		ids = append(ids, int(u.ID))
 	}
+	tx := p.data.db.Begin()
 
-	if !utils.Contains(ids, int(id)) {
-		investor.Projects = append(investor.Projects, &projectInfo)
+	var investProject InvestProject
+	if err := tx.Where(&InvestProject{ProjectID: projectInfo.ID, InvestorID: investorID}).First(&investProject).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			investProject.ProjectID = projectInfo.ID
+			investProject.InvestorID = investorID
+			investProject.Money = uint64(money)
+			//todo maybe error catch and rollaback
+			tx.Create(&investProject)
+		} else {
+			tx.Rollback()
+			return errors.NotFound("ERROR_INVEST_PROJECT", err.Error())
+		}
 	}
 
+	investProject.Money += uint64(money)
+	if err := tx.Save(&investProject).Error; err != nil {
+		tx.Rollback()
+		return errors.InternalServer("ERROR_INVEST_PROJECT", "error invest project")
+	}
+
+	if !utils.Contains(ids, int(id)) {
+		investor.Projects = append(investor.Projects, &investProject)
+	}
 	investor.Money -= uint64(money)
-	if err := p.data.db.Save(&investor).Error; err != nil {
+	if err := tx.Save(&investor).Error; err != nil {
+		tx.Rollback()
 		return errors.InternalServer("ERROR_INVEST_PROJECT", "error invest project")
 	}
 	projectInfo.CurrentBudget += uint64(money)
-	if err := p.data.db.Save(&projectInfo).Error; err != nil {
+	if err := tx.Save(&projectInfo).Error; err != nil {
+		tx.Rollback()
 		return errors.InternalServer("ERROR_INVEST_PROJECT", "error invest project")
 	}
 
-	return nil
+	return tx.Commit().Error
 }
 
 func (p projectRepo) modelToResponse(project Project) *biz.Project {

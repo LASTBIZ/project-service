@@ -2,27 +2,60 @@ syntax = "proto3";
 
 package api.roadmap;
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
 option go_package = "project-service/api/roadmap;roadmap";
 option java_multiple_files = true;
 option java_package = "api.roadmap";
 
 service Roadmap {
 	rpc AddRoadMap (CreateRoadmapRequest) returns (google.protobuf.Empty);
-	rpc RemoveRoadMap (RemoveRoadmapRequest) returns (google.protobuf.Empty);
-	rpc ListRoadmap (ListRoadmapRequest) returns (google.protobuf.Empty);
+	rpc UpdateRoadMap (UpdateRoadmapRequest) returns(google.protobuf.Empty);
+	rpc RemoveRoadMap (DeleteRoadmapRequest) returns (google.protobuf.Empty);
+	rpc ListRoadmap (ListRoadmapRequest) returns (ListRoadmapReply);
 }
 
-message CreateRoadmapRequest {}
-message CreateRoadmapReply {}
+message CreateRoadmapRequest {
+	google.protobuf.Timestamp start_date = 1 [(validate.rules).timestamp.required = true];
+	google.protobuf.Timestamp end_date = 2 [(validate.rules).timestamp.required = true];
+	string description = 3;
+	string name = 4;
+	string job = 5;
+	uint64 project_id = 6;
+}
 
-message UpdateRoadmapRequest {}
-message UpdateRoadmapReply {}
+message UpdateRoadmapRequest {
+	google.protobuf.Timestamp start_date = 1 [(validate.rules).timestamp.required = true];
+	google.protobuf.Timestamp end_date = 2 [(validate.rules).timestamp.required = true];
+	string description = 3;
+	string name = 4;
+	string job = 5;
+	uint64 project_id = 6;
+	uint64 id = 7;
+}
 
-message DeleteRoadmapRequest {}
-message DeleteRoadmapReply {}
+message DeleteRoadmapRequest {
+	uint64 id = 1;
+}
 
-message GetRoadmapRequest {}
-message GetRoadmapReply {}
+message ListRoadmapRequest {
+	uint32 pageNum = 1;
+	uint32 pageSize = 2;
+	uint32 project_id = 3;
+}
 
-message ListRoadmapRequest {}
-message ListRoadmapReply {}
+message ListRoadmapReply {
+	message Roadmap {
+		google.protobuf.Timestamp start_date = 1;
+		google.protobuf.Timestamp end_date = 2;
+		string description = 3;
+		string name = 4;
+		string job = 5;
+		uint64 project_id = 6;
+		uint64 id = 7;
+	}
+	repeated Roadmap roadmaps = 1;
+	uint32 total = 2;
+}

@@ -5,7 +5,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
 	slog "log"
 	"os"
 	"project-service/internal/biz"
@@ -17,7 +16,14 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewTransaction, NewProjectRepo, NewInvestorRepo, NewRoadmapRepo, NewCategoryRepo)
+var ProviderSet = wire.NewSet(
+	NewData,
+	NewDB,
+	NewTransaction,
+	NewProjectRepo,
+	NewInvestorRepo,
+	NewRoadmapRepo,
+	NewCategoryRepo)
 
 // Data .
 type Data struct {
@@ -66,7 +72,7 @@ func NewDB(c *conf.Data) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(c.Database.Source), &gorm.Config{
 		Logger:                                   newLogger,
 		DisableForeignKeyConstraintWhenMigrating: true,
-		NamingStrategy:                           schema.NamingStrategy{},
+		//NamingStrategy:                           schema.NamingStrategy{},
 	})
 
 	if err != nil {

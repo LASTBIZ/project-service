@@ -60,3 +60,7 @@ func (up *ProjectUseCase) GetProjectById(ctx context.Context, id uint64) (*Proje
 func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, keywords string, categoryID uint32, pageNum, pageSize int) ([]*Project, int, error) {
 	return up.repo.GetProjectByCategoryID(ctx, categoryID, keywords, pageNum, pageSize)
 }
+
+func (up *ProjectUseCase) InvestProject(ctx context.Context, id uint64, investorId uint64, money int) error {
+	return up.repo.InvestProject(ctx, id, investorId, money)
+}

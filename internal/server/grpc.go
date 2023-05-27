@@ -1,7 +1,10 @@
 package server
 
 import (
-	v1 "project-service/api/helloworld/v1"
+	"project-service/api/category"
+	"project-service/api/investor"
+	"project-service/api/project"
+	"project-service/api/roadmap"
 	"project-service/internal/conf"
 	"project-service/internal/service"
 
@@ -11,7 +14,12 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server,
+	cat *service.CategoryService,
+	invest *service.InvestorService,
+	pro *service.ProjectService,
+	road *service.RoadmapService,
+	logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -27,6 +35,9 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterGreeterServer(srv, greeter)
+	category.RegisterCategoryServer(srv, cat)
+	investor.RegisterInvestorServer(srv, invest)
+	project.RegisterProjectServer(srv, pro)
+	roadmap.RegisterRoadmapServer(srv, road)
 	return srv
 }

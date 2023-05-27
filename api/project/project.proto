@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.project;
 
 import "google/protobuf/empty.proto";
+import "validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "project-service/api/project;project";
@@ -19,36 +20,36 @@ service Project {
 }
 
 message CreateProjectRequest {
-	string roadmap_img_url = 1;
-	string main_image_url = 2;
-	google.protobuf.Timestamp startDate = 3;
-	google.protobuf.Timestamp endDate = 4;
-	string location = 5;
-	string name = 6;
-	string description = 7;
-	uint32 category_id = 8;
-	uint64 need_budget = 9;
+	string roadmap_img_url = 1 [(validate.rules).string.prefix = "https://"];
+	string main_image_url = 2 [(validate.rules).string.prefix = "https://"];
+	google.protobuf.Timestamp startDate = 3 [(validate.rules).timestamp.required = true];
+	google.protobuf.Timestamp endDate = 4 [(validate.rules).timestamp.required = true];
+	string location = 5 [(validate.rules).string.min_len = 1];
+	string name = 6 [(validate.rules).string.min_len = 1];
+	string description = 7 [(validate.rules).string.min_len = 1];
+	uint32 category_id = 8 [(validate.rules).uint32.gt = 0];
+	uint64 need_budget = 9 [(validate.rules).uint64.gt = 0];
 }
 
 message UpdateProjectRequest {
-	string roadmap_img_url = 1;
-	string main_image_url = 2;
-	google.protobuf.Timestamp startDate = 3;
-	google.protobuf.Timestamp endDate = 4;
-	string location = 5;
-	string name = 6;
-	string description = 7;
-	uint32 category_id = 8;
-	uint64 need_budget = 9;
-	uint64 id = 10;
+	string roadmap_img_url = 1 [(validate.rules).string.prefix = "https://"];
+	string main_image_url = 2  [(validate.rules).string.prefix = "https://"];
+	google.protobuf.Timestamp startDate = 3 [(validate.rules).timestamp.required = true];
+	google.protobuf.Timestamp endDate = 4 [(validate.rules).timestamp.required = true];
+	string location = 5 [(validate.rules).string.min_len = 1];
+	string name = 6 [(validate.rules).string.min_len = 1];
+	string description = 7 [(validate.rules).string.min_len = 1];
+	uint32 category_id = 8 [(validate.rules).uint32.gt = 0];
+	uint64 need_budget = 9 [(validate.rules).uint64.gt = 0];
+	uint64 id = 10 [(validate.rules).uint64.gt = 0];
 }
 
 message DeleteProjectRequest {
-	uint64 id = 1;
+	uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message GetProjectRequest {
-	uint64 id = 1;
+	uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message GetProjectReply {
@@ -61,7 +62,8 @@ message GetProjectReply {
 	string description = 7;
 	uint32 category_id = 8;
 	uint64 need_budget = 9;
-	uint32 id = 10;
+	uint64 id = 10;
+	uint64 current_budget = 11;
 }
 
 message ListProjectRequest {
@@ -77,10 +79,6 @@ message ListProjectReply {
 }
 
 message ProjectInfoResponse {
-	message Category {
-		uint32 id = 1;
-		string name = 2;
-	}
 	string main_image_url = 1;
 	google.protobuf.Timestamp startDate = 2;
 	google.protobuf.Timestamp endDate = 3;
@@ -91,7 +89,7 @@ message ProjectInfoResponse {
 }
 
 message InvestProjectRequest {
-	uint64 id = 1;
-	uint64 investor_id = 2;
-	uint32 money = 3;
+	uint64 id = 1 [(validate.rules).uint64.gt = 0];
+	uint64 investor_id = 2 [(validate.rules).uint64.gt = 0];
+	uint32 money = 3 [(validate.rules).uint32.gt = 0];
 }
