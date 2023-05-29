@@ -182,7 +182,7 @@ func (p projectRepo) InvestProject(ctx context.Context, id uint64, investorID ui
 	}
 
 	var investor Investor
-	if err := p.data.db.Where(&Investor{ID: investorID}).Preload("Project").First(&investor).Error; err != nil {
+	if err := p.data.db.Where(&Investor{UserID: investorID}).Preload("Project").First(&investor).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.NotFound("INVESTOR_NOT_FOUND", "investor not found")
 		}
