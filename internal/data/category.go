@@ -51,7 +51,7 @@ func (c categoryRepo) GetAllCategories(ctx context.Context) (string, error) {
 		]
 	*/
 	var categories []Category
-	c.data.db.Where(&Category{Level: 1}).Preload("SubCategory.SubCategory").Find(&categories)
+	c.data.db.Where(&Category{Level: 1}).Preload("SubCategory.SubCategory").Omit("Projects").Find(&categories)
 	b, _ := json.Marshal(&categories)
 	return string(b), nil
 }
@@ -63,12 +63,12 @@ func (c categoryRepo) CreateCategory(ctx context.Context, category *biz.Category
 	if category.Level != 1 {
 		var categories Category
 		if res := c.data.db.First(&categories, category.ParentCategoryID); res.RowsAffected == 0 {
-			return nil, errors.NotFound("CATEGORY_NOT_FOUND", "商品分类不存在")
+			return nil, errors.NotFound("CATEGORY_NOT_FOUND", "caregory not found")
 		}
 		cMap.ParentCategoryID = category.ParentCategoryID
 	}
 
-	result := c.data.db.Model(&Category{}).Create(cMap)
+	result := c.data.db.Create(&cMap)
 	if result.Error != nil {
 		return nil, errors.InternalServer("CATEGORY_CREATE_ERROR", result.Error.Error())
 	}

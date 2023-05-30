@@ -14,7 +14,7 @@ type Investor struct {
 	Money    uint64
 	FullName string
 	UserID   uint64
-	Projects []*InvestProject
+	Projects []InvestProject
 }
 
 type investorRepo struct {

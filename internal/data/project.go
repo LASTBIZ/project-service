@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -136,21 +135,21 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 		localDB = localDB.Where("name LIKE ?", "%"+keyWords+"%")
 	}
 
-	var subQuery string
+	//var subQuery string
 	if categoryID > 0 {
 		var category Category
 		if result := p.data.db.First(&category, categoryID); result.RowsAffected == 0 {
 			return nil, 0, errors.NotFound("CATEGORY_NOT_FOUND", "error not found category")
 		}
 
-		if category.Level == 1 {
-			subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category WHERE parent_category_id=%d)", categoryID)
-		} else if category.Level == 2 {
-			subQuery = fmt.Sprintf("select id from category WHERE parent_category_id=%d", categoryID)
-		} else if category.Level == 3 {
-			subQuery = fmt.Sprintf("select id from category WHERE id=%d", categoryID)
-		}
-		localDB = localDB.Where(fmt.Sprintf("category_id in (%s)", subQuery))
+		//if category.Level == 1 {
+		//	subQuery = fmt.Sprintf("select id from category where parent_category_id in (select id from category WHERE parent_category_id=%d)", categoryID)
+		//} else if category.Level == 2 {
+		//	subQuery = fmt.Sprintf("select id from category WHERE parent_category_id=%d", categoryID)
+		//} else if category.Level == 3 {
+		//	subQuery = fmt.Sprintf("select id from category WHERE id=%d", categoryID)
+		//}
+		localDB = localDB.Where(&Project{CategoryID: categoryID})
 	}
 	var count int64
 	localDB.Count(&count)
@@ -182,7 +181,7 @@ func (p projectRepo) InvestProject(ctx context.Context, id uint64, investorID ui
 	}
 
 	var investor Investor
-	if err := p.data.db.Where(&Investor{UserID: investorID}).Preload("Project").First(&investor).Error; err != nil {
+	if err := p.data.db.Where(&Investor{UserID: investorID}).Preload("InvestProject").First(&investor).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.NotFound("INVESTOR_NOT_FOUND", "investor not found")
 		}
@@ -220,7 +219,7 @@ func (p projectRepo) InvestProject(ctx context.Context, id uint64, investorID ui
 	}
 
 	if !utils.Contains(ids, int(id)) {
-		investor.Projects = append(investor.Projects, &investProject)
+		investor.Projects = append(investor.Projects, investProject)
 	}
 	investor.Money -= uint64(money)
 	if err := tx.Save(&investor).Error; err != nil {

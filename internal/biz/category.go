@@ -11,8 +11,8 @@ type Category struct {
 	ParentCategory   *Category
 	ParentCategoryID uint32
 	SubCategory      []*Category
-	Projects         []Project
-	Level            int32
+	//Projects         []Project
+	Level int32
 }
 
 type CategoryRepo interface {
