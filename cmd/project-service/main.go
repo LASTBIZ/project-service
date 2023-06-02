@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/go-kratos/kratos/v2/config/env"
 	"os"
 
 	"project-service/internal/conf"
@@ -58,6 +59,7 @@ func main() {
 	)
 	c := config.New(
 		config.WithSource(
+			env.NewSource("PROJECT_"),
 			file.NewSource(flagconf),
 		),
 	)

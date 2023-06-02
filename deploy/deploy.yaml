@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-service
+  labels:
+    app: project-service
+spec:
+  selector:
+    matchLabels:
+      app: project-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: project-service
+    spec:
+      containers:
+        - name: project-service
+          image: IMAGE
+          ports:
+            - name: project-service
+              containerPort: 9000
+          env:
+            - name: PROJECT_DB_SOURCE
+              valueFrom:
+               secretKeyRef:
+                 name: database
+                 key: connect
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-service
+spec:
+  selector:
+    app: project-service
+  ports:
+    - port: 3000
+      targetPort: project-service
