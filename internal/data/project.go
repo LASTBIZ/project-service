@@ -106,7 +106,7 @@ func (p projectRepo) UpdateProject(ctx context.Context, project *biz.Project) (b
 	projectInfo.NeedBudget = project.NeedBudget
 	projectInfo.CategoryID = project.CategoryID
 
-	if err := p.data.db.Save(&projectInfo); err != nil {
+	if err := p.data.db.Save(&projectInfo).Error; err != nil {
 		return false, errors.InternalServer("PROJECT_UPDATE_ERROR", "error update project")
 	}
 
