@@ -151,6 +151,8 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 		//}
 		localDB = localDB.Where(&Project{CategoryID: categoryID})
 	}
+	var count int64
+	localDB.Count(&count)
 
 	result := localDB.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	if err := result.Error; err != nil {
@@ -160,8 +162,6 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
-
-	count := result.RowsAffected
 
 	//p.data.db.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	rv := make([]*biz.Project, 0)
