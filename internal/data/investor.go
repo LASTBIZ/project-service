@@ -78,10 +78,10 @@ func (i investorRepo) GetInvestorById(ctx context.Context, id uint64) (*biz.Inve
 	return re, nil
 }
 
-func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*biz.Investor, int, error) {
-	var investorsInfo []Investor
+func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*biz.ProjectInvestor, int, error) {
+	var investorsInfo []InvestProject
 	//result := i.data.db.Joins("JOIN project_investors pi ON pi.investor_id = investors.id").Where("pi.project_id = ?", projectId).Find(&investorsInfo)
-	result := i.data.db.Preload("InvestProject", i.data.db.Where(&InvestProject{ProjectID: *projectId})).Find(&investorsInfo)
+	result := i.data.db.Preload("Investor").Omit("Investor.Money").Where(&InvestProject{ProjectID: *projectId}).Find(&investorsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
@@ -89,12 +89,11 @@ func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *ui
 
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
-
 	total := int(result.RowsAffected)
 	i.data.db.Scopes(paginate(pageNum, pageSize)).Find(&investorsInfo)
-	rv := make([]*biz.Investor, 0)
+	rv := make([]*biz.ProjectInvestor, 0)
 	for _, u := range investorsInfo {
-		rv = append(rv, ModelToResponseInvestor(u))
+		rv = append(rv, ModelToResponseInvestorProject(u))
 	}
 	return rv, total, nil
 }
@@ -151,6 +150,20 @@ func (i investorRepo) SetMoneyInvestor(ctx context.Context, money int, id uint64
 	}
 
 	return true, nil
+}
+
+func ModelToResponseInvestorProject(iv InvestProject) *biz.ProjectInvestor {
+	ivInfoRsp := &biz.ProjectInvestor{
+		ID:    iv.ID,
+		Money: iv.Money,
+		Investor: biz.Investor{
+			FullName: iv.Investor.FullName,
+		},
+
+		//ProjectID: iv.ProjectID,
+	}
+
+	return ivInfoRsp
 }
 
 func ModelToResponseInvestor(iv Investor) *biz.Investor {

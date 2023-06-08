@@ -13,11 +13,19 @@ type Investor struct {
 	ProjectID *uint64
 }
 
+type ProjectInvestor struct {
+	ID         uint64
+	ProjectID  uint64
+	InvestorID uint64
+	Investor   Investor
+	Money      uint64
+}
+
 type InvestorRepo interface {
 	CreateInvestor(ctx context.Context, investor *Investor) (*Investor, error)
 	DeleteInvestor(ctx context.Context, id uint64) (bool, error)
 	GetInvestorById(ctx context.Context, id uint64) (*Investor, error)
-	ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*Investor, int, error)
+	ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*ProjectInvestor, int, error)
 	AddMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
 	RemoveMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
 	SetMoneyInvestor(ctx context.Context, money int, id uint64) (bool, error)
@@ -44,7 +52,7 @@ func (iu *InvestorUseCase) GetInvestorById(ctx context.Context, id uint64) (*Inv
 	return iu.repo.GetInvestorById(ctx, id)
 }
 
-func (iu *InvestorUseCase) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*Investor, int, error) {
+func (iu *InvestorUseCase) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*ProjectInvestor, int, error) {
 	return iu.repo.ListInvestorByProjectId(ctx, projectId, pageNum, pageSize)
 }
 
