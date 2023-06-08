@@ -84,10 +84,10 @@ func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *ui
 	db := i.data.db.Model(&InvestProject{}).
 		Where(&InvestProject{ProjectID: *projectId}).
 		Preload("Investor").
-		Omit("Investor.Money")
+		Omit("Investor.Money").Find(&investorsInfo)
 
 	total := int(db.RowsAffected)
-	result := db.Scopes(paginate(pageNum, pageSize)).Find(&investorsInfo)
+	result := db.Scopes(paginate(pageNum, pageSize))
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
