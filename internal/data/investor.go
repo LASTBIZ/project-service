@@ -81,7 +81,7 @@ func (i investorRepo) GetInvestorById(ctx context.Context, id uint64) (*biz.Inve
 func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*biz.ProjectInvestor, int, error) {
 	var investorsInfo []InvestProject
 	//result := i.data.db.Joins("JOIN project_investors pi ON pi.investor_id = investors.id").Where("pi.project_id = ?", projectId).Find(&investorsInfo)
-	result := i.data.db.Preload("Investor").Omit("Investor.Money").Where(&InvestProject{ProjectID: *projectId}).Find(&investorsInfo)
+	result := i.data.db.Where(&InvestProject{ProjectID: *projectId}).Preload("Investor").Omit("Investor.Money").Find(&investorsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
