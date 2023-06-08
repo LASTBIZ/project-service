@@ -27,6 +27,7 @@ message ListInvestorRequest {
 message ListInvestorReply {
 	message Investor {
 		string full_name = 1;
+		int64 sum = 2;
 	}
 	repeated Investor investors = 1;
 	int32 total = 2;
