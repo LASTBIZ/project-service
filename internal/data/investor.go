@@ -86,8 +86,6 @@ func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *ui
 		Joins("Investor").
 		Omit("Investor.Money")
 
-	var total int64
-	db.Count(&total)
 	result := db.Scopes(paginate(pageNum, pageSize)).Find(&investorsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -96,6 +94,7 @@ func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *ui
 
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
+	total := result.RowsAffected
 
 	rv := make([]*biz.ProjectInvestor, 0)
 	for _, u := range investorsInfo {
