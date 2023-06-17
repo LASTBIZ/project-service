@@ -110,7 +110,8 @@ func (s *InvestorService) ListInvestor(ctx context.Context, req *pb.ListInvestor
 
 	for _, inv := range li {
 		investorsResponse = append(investorsResponse, &pb.ListInvestorReply_Investor{
-			FullName: inv.FullName,
+			FullName: inv.Investor.FullName,
+			Sum:      int64(inv.Money),
 		})
 	}
 

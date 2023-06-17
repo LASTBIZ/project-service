@@ -154,7 +154,7 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 	var count int64
 	localDB.Count(&count)
 
-	result := localDB.Preload("Category").Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
+	result := localDB.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	if err := result.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
@@ -163,7 +163,7 @@ func (p projectRepo) GetProjectByCategoryID(ctx context.Context, categoryID uint
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
 
-	p.data.db.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
+	//p.data.db.Scopes(paginate(pageNum, pageSize)).Find(&projectsInfo)
 	rv := make([]*biz.Project, 0)
 	for _, u := range projectsInfo {
 		rv = append(rv, p.modelToResponse(u))
