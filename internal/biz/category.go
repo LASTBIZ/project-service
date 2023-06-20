@@ -20,6 +20,7 @@ type CategoryRepo interface {
 	CreateCategory(ctx context.Context, category *Category) (*Category, error)
 	DeleteCategory(ctx context.Context, id uint32) error
 	UpdateCategory(ctx context.Context, category *Category) error
+	GetSubCategories(ctx context.Context) (string, error)
 }
 
 type CategoryUseCase struct {
@@ -46,4 +47,8 @@ func (cu *CategoryUseCase) DeleteCategory(ctx context.Context, id uint32) error 
 
 func (cu *CategoryUseCase) UpdateCategory(ctx context.Context, category *Category) error {
 	return cu.repo.UpdateCategory(ctx, category)
+}
+
+func (cu *CategoryUseCase) GetSubCategories(ctx context.Context) (string, error) {
+	return cu.repo.GetSubCategories(ctx)
 }

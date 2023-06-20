@@ -10,7 +10,7 @@ option java_package = "api.category";
 
 service Category {
 	rpc GetAllCategoryList (google.protobuf.Empty) returns (CategoryListReply);
-//	rpc GetSubCategory (CategoryListRequest) returns (SubCategoryListReply);
+	rpc GetSubCategory (google.protobuf.Empty) returns (CategoryListReply);
 	rpc CreateCategory (CreateCategoryRequest) returns (google.protobuf.Empty);
 	rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
 	rpc UpdateCategory (CategoryInfoRequest) returns (google.protobuf.Empty);

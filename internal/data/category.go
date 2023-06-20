@@ -56,6 +56,13 @@ func (c categoryRepo) GetAllCategories(ctx context.Context) (string, error) {
 	return string(b), nil
 }
 
+func (c categoryRepo) GetSubCategories(ctx context.Context) (string, error) {
+	var categories []Category
+	c.data.db.Where(&Category{Level: 2}).Preload("SubCategory.SubCategory").Omit("Projects").Find(&categories)
+	b, _ := json.Marshal(&categories)
+	return string(b), nil
+}
+
 func (c categoryRepo) CreateCategory(ctx context.Context, category *biz.Category) (*biz.Category, error) {
 	cMap := Category{}
 	cMap.Name = category.Name

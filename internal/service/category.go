@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"project-service/internal/biz"
 
 	pb "project-service/api/category"
@@ -21,6 +22,17 @@ func NewCategoryService(uc *biz.CategoryUseCase, logger log.Logger) *CategorySer
 
 func (s *CategoryService) GetAllCategoryList(ctx context.Context, req *empty.Empty) (*pb.CategoryListReply, error) {
 	jsonData, err := s.uc.GetAllCategories(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.CategoryListReply{
+		JsonData: jsonData,
+	}, nil
+}
+
+func (s *CategoryService) GetSubCategory(ctx context.Context, req *emptypb.Empty) (*pb.CategoryListReply, error) {
+	jsonData, err := s.uc.GetSubCategories(ctx)
 	if err != nil {
 		return nil, err
 	}
