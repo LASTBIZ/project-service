@@ -246,6 +246,8 @@ func (p projectRepo) modelToResponse(project Project) *biz.Project {
 		Name:          project.Name,
 		Description:   project.Description,
 		CategoryID:    project.CategoryID,
+		NeedBudget:    project.NeedBudget,
+		CurrentBudget: project.CurrentBudget,
 		Category: biz.Category{
 			ID:   project.Category.ID,
 			Name: project.Category.Name,
