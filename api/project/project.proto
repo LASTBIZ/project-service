@@ -86,6 +86,10 @@ message ProjectInfoResponse {
 	string name = 5;
 	uint32 category_id = 6;
 	uint64 id = 7;
+	message Category {
+		string name = 1;
+	}
+	Category category = 8;
 }
 
 message InvestProjectRequest {

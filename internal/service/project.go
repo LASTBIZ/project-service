@@ -41,6 +41,7 @@ func (s *ProjectService) CreateProject(ctx context.Context, req *pb.CreateProjec
 	}
 	return &empty.Empty{}, nil
 }
+
 func (s *ProjectService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*empty.Empty, error) {
 	err := req.Validate()
 	if err != nil {
@@ -63,6 +64,7 @@ func (s *ProjectService) UpdateProject(ctx context.Context, req *pb.UpdateProjec
 	}
 	return &empty.Empty{}, nil
 }
+
 func (s *ProjectService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*empty.Empty, error) {
 	err := req.Validate()
 	if err != nil {
@@ -74,6 +76,7 @@ func (s *ProjectService) DeleteProject(ctx context.Context, req *pb.DeleteProjec
 	}
 	return &empty.Empty{}, nil
 }
+
 func (s *ProjectService) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -99,6 +102,7 @@ func (s *ProjectService) GetProject(ctx context.Context, req *pb.GetProjectReque
 		CurrentBudget: pr.CurrentBudget,
 	}, nil
 }
+
 func (s *ProjectService) GetProjectByCategoryID(ctx context.Context, req *pb.ListProjectRequest) (*pb.ListProjectReply, error) {
 	err := req.Validate()
 	if err != nil {
@@ -123,6 +127,9 @@ func (s *ProjectService) GetProjectByCategoryID(ctx context.Context, req *pb.Lis
 				Name:         pr.Name,
 				CategoryId:   pr.CategoryID,
 				Id:           pr.ID,
+				Category: &pb.ProjectInfoResponse_Category{
+					Name: pr.Category.Name,
+				},
 			})
 	}
 
