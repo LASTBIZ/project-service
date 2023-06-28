@@ -38,7 +38,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	projectRepo := data.NewProjectRepo(dataData, logger)
 	projectUseCase := biz.NewProjectUseCase(projectRepo, logger)
 	projectService := service.NewProjectService(projectUseCase, logger)
-	roadmapService := service.NewRoadmapService()
+	roadmapRepo := data.NewRoadmapRepo(dataData, logger)
+	roadmapUseCase := biz.NewRoadmapUseCase(roadmapRepo, logger)
+	roadmapService := service.NewRoadmapService(roadmapUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, categoryService, investorService, projectService, roadmapService, logger)
 	app := newApp(logger, grpcServer)
 	return app, func() {

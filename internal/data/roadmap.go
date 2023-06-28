@@ -30,10 +30,10 @@ func NewRoadmapRepo(data *Data, logger log.Logger) biz.RoadmapRepo {
 
 func (r roadmapRepo) CreateRoadmap(ctx context.Context, roadmap *biz.RoadMap) (*biz.RoadMap, error) {
 	var rm RoadMap
-	result := r.data.db.Where(&RoadMap{StartDate: roadmap.StartDate, EndDate: roadmap.EndDate}).Find(&rm)
-	if result.RowsAffected == 1 {
-		return nil, errors.New(500, "ROADMAP_EXISTS", "exists is name "+roadmap.Name)
-	}
+	//result := r.data.db.Where(&RoadMap{StartDate: roadmap.StartDate, EndDate: roadmap.EndDate}).Find(&rm)
+	//if result.RowsAffected == 1 {
+	//	return nil, errors.New(500, "ROADMAP_EXISTS", "exists is name "+roadmap.Name)
+	//}
 
 	rm.StartDate = roadmap.StartDate
 	rm.EndDate = roadmap.EndDate

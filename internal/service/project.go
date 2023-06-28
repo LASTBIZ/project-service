@@ -109,6 +109,9 @@ func (s *ProjectService) GetProjectByCategoryID(ctx context.Context, req *pb.Lis
 		return nil, err
 	}
 	prs, total, err := s.up.GetProjectByCategoryId(ctx, req.Keywords, req.CategoryId, int(req.PageNum), int(req.PageSize))
+	if err != nil {
+		return nil, err
+	}
 	projectsResponse := make([]*pb.ProjectInfoResponse, 0)
 	if total == 0 {
 		return &pb.ListProjectReply{
