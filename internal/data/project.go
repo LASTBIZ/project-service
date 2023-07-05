@@ -22,6 +22,9 @@ type Project struct {
 	Description   string `gorm:"type:text"`
 	CategoryID    uint32 `gorm:"not null"`
 	CurrentBudget uint64
+	InLive        bool
+	Video         string
+	ScreenShot    string
 	NeedBudget    uint64
 	Category      Category
 	Investors     []InvestProject
@@ -45,6 +48,72 @@ func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
 	return &projectRepo{data: data, log: log.NewHelper(logger)}
 }
 
+func (p projectRepo) Video(ctx context.Context, id uint64, video string) (bool, error) {
+	var projectInfo Project
+	result := p.data.db.Where(&Project{ID: id}).First(&projectInfo)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
+	}
+
+	if result.RowsAffected == 0 {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
+	}
+
+	projectInfo.Video = video
+
+	result = p.data.db.Save(&projectInfo)
+
+	if result.Error != nil {
+		return false, errors.InternalServer("VIDEO_ERROR", "error create video")
+	}
+
+	return true, nil
+}
+
+func (p projectRepo) ScreenShot(ctx context.Context, id uint64, screenShot string) (bool, error) {
+	var projectInfo Project
+	result := p.data.db.Where(&Project{ID: id}).First(&projectInfo)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
+	}
+
+	if result.RowsAffected == 0 {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
+	}
+
+	projectInfo.ScreenShot = screenShot
+
+	result = p.data.db.Save(&projectInfo)
+
+	if result.Error != nil {
+		return false, errors.InternalServer("SCREENSHOT_ERROR", "error create screenshot")
+	}
+
+	return true, nil
+}
+
+func (p projectRepo) InLive(ctx context.Context, id uint64, inLive bool) (bool, error) {
+	var projectInfo Project
+	result := p.data.db.Where(&Project{ID: id}).First(&projectInfo)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "project not found")
+	}
+
+	if result.RowsAffected == 0 {
+		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
+	}
+
+	projectInfo.InLive = inLive
+
+	result = p.data.db.Save(&projectInfo)
+
+	if result.Error != nil {
+		return false, errors.InternalServer("INLIVE_ERROR", "error create inlive")
+	}
+
+	return true, nil
+}
+
 func (p projectRepo) CreateProject(ctx context.Context, project *biz.Project) (*biz.Project, error) {
 	pr := Project{}
 	pr.RoadMapImgURL = project.RoadMapImgURL
@@ -57,6 +126,9 @@ func (p projectRepo) CreateProject(ctx context.Context, project *biz.Project) (*
 	pr.CategoryID = project.CategoryID
 	pr.NeedBudget = project.NeedBudget
 	pr.CurrentBudget = 0
+	pr.InLive = false
+	pr.Video = ""
+	pr.ScreenShot = ""
 	res := p.data.db.Create(&pr)
 	if res.Error != nil {
 		return nil, errors.InternalServer("CREATE_PROJECT_ERROR", "error create project")

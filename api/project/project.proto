@@ -17,6 +17,24 @@ service Project {
 	rpc GetProject (GetProjectRequest) returns (GetProjectReply);
 	rpc GetProjectByCategoryID (ListProjectRequest) returns (ListProjectReply);
 	rpc InvestProject (InvestProjectRequest) returns (google.protobuf.Empty);
+	rpc VideoProject(VideoRequest) returns(google.protobuf.Empty);
+	rpc ScreenShoot(ScreenShotRequest) returns(google.protobuf.Empty);
+	rpc Live(LiveRequest) returns(google.protobuf.Empty);
+}
+
+message LiveRequest {
+	uint64 project_id = 1;
+	bool live = 2;
+}
+
+message ScreenShotRequest {
+	uint64 project_id = 1;
+	string screenshot_name = 2;
+}
+
+message VideoRequest {
+	uint64 project_id = 1;
+	string video_name = 2;
 }
 
 message CreateProjectRequest {
@@ -89,7 +107,7 @@ message ProjectInfoResponse {
 	message Category {
 		string name = 1;
 	}
-	Category category = 8;
+	Category category = 8 ;
 }
 
 message InvestProjectRequest {

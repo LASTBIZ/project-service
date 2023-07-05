@@ -35,6 +35,318 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on LiveRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *LiveRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LiveRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LiveRequestMultiError, or
+// nil if none found.
+func (m *LiveRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LiveRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProjectId
+
+	// no validation rules for Live
+
+	if len(errors) > 0 {
+		return LiveRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// LiveRequestMultiError is an error wrapping multiple validation errors
+// returned by LiveRequest.ValidateAll() if the designated constraints aren't met.
+type LiveRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LiveRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LiveRequestMultiError) AllErrors() []error { return m }
+
+// LiveRequestValidationError is the validation error returned by
+// LiveRequest.Validate if the designated constraints aren't met.
+type LiveRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LiveRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LiveRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LiveRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LiveRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LiveRequestValidationError) ErrorName() string { return "LiveRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e LiveRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLiveRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LiveRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LiveRequestValidationError{}
+
+// Validate checks the field values on ScreenShotRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ScreenShotRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScreenShotRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ScreenShotRequestMultiError, or nil if none found.
+func (m *ScreenShotRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScreenShotRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProjectId
+
+	// no validation rules for ScreenshotName
+
+	if len(errors) > 0 {
+		return ScreenShotRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScreenShotRequestMultiError is an error wrapping multiple validation errors
+// returned by ScreenShotRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ScreenShotRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScreenShotRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScreenShotRequestMultiError) AllErrors() []error { return m }
+
+// ScreenShotRequestValidationError is the validation error returned by
+// ScreenShotRequest.Validate if the designated constraints aren't met.
+type ScreenShotRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScreenShotRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScreenShotRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScreenShotRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScreenShotRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScreenShotRequestValidationError) ErrorName() string {
+	return "ScreenShotRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ScreenShotRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScreenShotRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScreenShotRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScreenShotRequestValidationError{}
+
+// Validate checks the field values on VideoRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VideoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VideoRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VideoRequestMultiError, or
+// nil if none found.
+func (m *VideoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VideoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProjectId
+
+	// no validation rules for VideoName
+
+	if len(errors) > 0 {
+		return VideoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// VideoRequestMultiError is an error wrapping multiple validation errors
+// returned by VideoRequest.ValidateAll() if the designated constraints aren't met.
+type VideoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VideoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VideoRequestMultiError) AllErrors() []error { return m }
+
+// VideoRequestValidationError is the validation error returned by
+// VideoRequest.Validate if the designated constraints aren't met.
+type VideoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VideoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VideoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VideoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VideoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VideoRequestValidationError) ErrorName() string { return "VideoRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VideoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVideoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VideoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VideoRequestValidationError{}
+
 // Validate checks the field values on CreateProjectRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

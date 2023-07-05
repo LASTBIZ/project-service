@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"project-service/internal/biz"
 
@@ -18,6 +19,42 @@ type ProjectService struct {
 
 func NewProjectService(up *biz.ProjectUseCase, logger log.Logger) *ProjectService {
 	return &ProjectService{up: up, log: log.NewHelper(logger)}
+}
+
+func (s *ProjectService) VideoProject(ctx context.Context, req *pb.VideoRequest) (*emptypb.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.up.Video(ctx, req.ProjectId, req.VideoName)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *ProjectService) ScreenShoot(ctx context.Context, req *pb.ScreenShotRequest) (*emptypb.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.up.ScreenShot(ctx, req.ProjectId, req.ScreenshotName)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (s *ProjectService) Live(ctx context.Context, req *pb.LiveRequest) (*emptypb.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.up.InLive(ctx, req.ProjectId, req.Live)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, req *pb.CreateProjectRequest) (*empty.Empty, error) {

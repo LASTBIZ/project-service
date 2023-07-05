@@ -26,6 +26,9 @@ const (
 	Project_GetProject_FullMethodName             = "/api.project.Project/GetProject"
 	Project_GetProjectByCategoryID_FullMethodName = "/api.project.Project/GetProjectByCategoryID"
 	Project_InvestProject_FullMethodName          = "/api.project.Project/InvestProject"
+	Project_VideoProject_FullMethodName           = "/api.project.Project/VideoProject"
+	Project_ScreenShoot_FullMethodName            = "/api.project.Project/ScreenShoot"
+	Project_Live_FullMethodName                   = "/api.project.Project/Live"
 )
 
 // ProjectClient is the client API for Project service.
@@ -38,6 +41,9 @@ type ProjectClient interface {
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectReply, error)
 	GetProjectByCategoryID(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error)
 	InvestProject(ctx context.Context, in *InvestProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	VideoProject(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ScreenShoot(ctx context.Context, in *ScreenShotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Live(ctx context.Context, in *LiveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type projectClient struct {
@@ -102,6 +108,33 @@ func (c *projectClient) InvestProject(ctx context.Context, in *InvestProjectRequ
 	return out, nil
 }
 
+func (c *projectClient) VideoProject(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Project_VideoProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectClient) ScreenShoot(ctx context.Context, in *ScreenShotRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Project_ScreenShoot_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *projectClient) Live(ctx context.Context, in *LiveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Project_Live_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServer is the server API for Project service.
 // All implementations must embed UnimplementedProjectServer
 // for forward compatibility
@@ -112,6 +145,9 @@ type ProjectServer interface {
 	GetProject(context.Context, *GetProjectRequest) (*GetProjectReply, error)
 	GetProjectByCategoryID(context.Context, *ListProjectRequest) (*ListProjectReply, error)
 	InvestProject(context.Context, *InvestProjectRequest) (*emptypb.Empty, error)
+	VideoProject(context.Context, *VideoRequest) (*emptypb.Empty, error)
+	ScreenShoot(context.Context, *ScreenShotRequest) (*emptypb.Empty, error)
+	Live(context.Context, *LiveRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProjectServer()
 }
 
@@ -136,6 +172,15 @@ func (UnimplementedProjectServer) GetProjectByCategoryID(context.Context, *ListP
 }
 func (UnimplementedProjectServer) InvestProject(context.Context, *InvestProjectRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InvestProject not implemented")
+}
+func (UnimplementedProjectServer) VideoProject(context.Context, *VideoRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VideoProject not implemented")
+}
+func (UnimplementedProjectServer) ScreenShoot(context.Context, *ScreenShotRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ScreenShoot not implemented")
+}
+func (UnimplementedProjectServer) Live(context.Context, *LiveRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Live not implemented")
 }
 func (UnimplementedProjectServer) mustEmbedUnimplementedProjectServer() {}
 
@@ -258,6 +303,60 @@ func _Project_InvestProject_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Project_VideoProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServer).VideoProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Project_VideoProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServer).VideoProject(ctx, req.(*VideoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Project_ScreenShoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ScreenShotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServer).ScreenShoot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Project_ScreenShoot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServer).ScreenShoot(ctx, req.(*ScreenShotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Project_Live_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LiveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServer).Live(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Project_Live_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServer).Live(ctx, req.(*LiveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Project_ServiceDesc is the grpc.ServiceDesc for Project service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +387,18 @@ var Project_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InvestProject",
 			Handler:    _Project_InvestProject_Handler,
+		},
+		{
+			MethodName: "VideoProject",
+			Handler:    _Project_VideoProject_Handler,
+		},
+		{
+			MethodName: "ScreenShoot",
+			Handler:    _Project_ScreenShoot_Handler,
+		},
+		{
+			MethodName: "Live",
+			Handler:    _Project_Live_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

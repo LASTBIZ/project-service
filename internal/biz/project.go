@@ -30,6 +30,9 @@ type ProjectRepo interface {
 	GetProjectById(ctx context.Context, id uint64) (*Project, error)
 	GetProjectByCategoryID(ctx context.Context, categoryID uint32, keyWords string, pageNum, pageSize int) ([]*Project, int, error)
 	InvestProject(ctx context.Context, id uint64, investorID uint64, money int) error
+	Video(ctx context.Context, id uint64, video string) (bool, error)
+	ScreenShot(ctx context.Context, id uint64, screenShot string) (bool, error)
+	InLive(ctx context.Context, id uint64, inLive bool) (bool, error)
 }
 
 type ProjectUseCase struct {
@@ -63,4 +66,16 @@ func (up *ProjectUseCase) GetProjectByCategoryId(ctx context.Context, keywords s
 
 func (up *ProjectUseCase) InvestProject(ctx context.Context, id uint64, investorId uint64, money int) error {
 	return up.repo.InvestProject(ctx, id, investorId, money)
+}
+
+func (up *ProjectUseCase) Video(ctx context.Context, id uint64, video string) (bool, error) {
+	return up.repo.Video(ctx, id, video)
+}
+
+func (up *ProjectUseCase) ScreenShot(ctx context.Context, id uint64, screenShot string) (bool, error) {
+	return up.repo.ScreenShot(ctx, id, screenShot)
+}
+
+func (up *ProjectUseCase) InLive(ctx context.Context, id uint64, inLive bool) (bool, error) {
+	return up.repo.InLive(ctx, id, inLive)
 }
