@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -80,13 +81,14 @@ func (i investorRepo) GetInvestorById(ctx context.Context, id uint64) (*biz.Inve
 
 func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *uint64, pageNum, pageSize int) ([]*biz.ProjectInvestor, int, error) {
 	var investorsInfo []InvestProject
-	//result := i.data.db.Joins("JOIN project_investors pi ON pi.investor_id = investors.id").Where("pi.project_id = ?", projectId).Find(&investorsInfo)
 	db := i.data.db.Model(&InvestProject{}).
+		Preload("Investor").
 		Where(&InvestProject{ProjectID: *projectId}).
-		Joins("Investor").
 		Omit("Investor.Money")
 	var total int64
 	db.Count(&total)
+
+	fmt.Println(total)
 
 	result := db.Scopes(paginate(pageNum, pageSize)).Find(&investorsInfo)
 	if err := result.Error; err != nil {
@@ -96,7 +98,6 @@ func (i investorRepo) ListInvestorByProjectId(ctx context.Context, projectId *ui
 
 		return nil, 0, errors.NotFound("PROJECT_NOT_FOUND", err.Error())
 	}
-
 	rv := make([]*biz.ProjectInvestor, 0)
 	for _, u := range investorsInfo {
 		rv = append(rv, ModelToResponseInvestorProject(u))

@@ -5,8 +5,10 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
+	"project-service/api/video"
 	"project-service/internal/biz"
 	"project-service/internal/utils"
+	"strconv"
 	"time"
 )
 
@@ -41,14 +43,15 @@ type InvestProject struct {
 
 type projectRepo struct {
 	data *Data
+	vs   video.VideoClient
 	log  *log.Helper
 }
 
-func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
-	return &projectRepo{data: data, log: log.NewHelper(logger)}
+func NewProjectRepo(data *Data, logger log.Logger, vs video.VideoClient) biz.ProjectRepo {
+	return &projectRepo{data: data, log: log.NewHelper(logger), vs: vs}
 }
 
-func (p projectRepo) Video(ctx context.Context, id uint64, video string) (bool, error) {
+func (p projectRepo) Video(ctx context.Context, id uint64, videoPath string) (bool, error) {
 	var projectInfo Project
 	result := p.data.db.Where(&Project{ID: id}).First(&projectInfo)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -58,8 +61,13 @@ func (p projectRepo) Video(ctx context.Context, id uint64, video string) (bool, 
 	if result.RowsAffected == 0 {
 		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
 	}
+	if len(projectInfo.Video) > 0 {
+		p.vs.DeleteVideo(ctx, &video.DeleteVideoRequest{
+			Path: projectInfo.Video,
+		})
+	}
 
-	projectInfo.Video = video
+	projectInfo.Video = videoPath
 
 	result = p.data.db.Save(&projectInfo)
 
@@ -79,6 +87,11 @@ func (p projectRepo) ScreenShot(ctx context.Context, id uint64, screenShot strin
 
 	if result.RowsAffected == 0 {
 		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
+	}
+	if len(projectInfo.ScreenShot) > 0 {
+		p.vs.DeleteScreenShoot(ctx, &video.DeleteScreenShotRequest{
+			Path: projectInfo.Video,
+		})
 	}
 
 	projectInfo.ScreenShot = screenShot
@@ -101,6 +114,19 @@ func (p projectRepo) InLive(ctx context.Context, id uint64, inLive bool) (bool, 
 
 	if result.RowsAffected == 0 {
 		return false, errors.NotFound("PROJECT_NOT_FOUND", "rows null")
+	}
+
+	if len(projectInfo.Video) > 0 {
+		p.vs.CreateVideo(ctx, &video.CreateVideoRequest{
+			Path: projectInfo.Video,
+		})
+	} else if len(projectInfo.ScreenShot) > 0 {
+		p.vs.CreateScreenShoot(ctx, &video.CreateScreenShotRequest{
+			Path:     projectInfo.ScreenShot,
+			SitePath: "http://localhost:3000/projects/" + strconv.FormatUint(id, 10),
+		})
+	} else {
+		return false, errors.NotFound("INLIVE_ERROR", "not found video and screenshot")
 	}
 
 	projectInfo.InLive = inLive

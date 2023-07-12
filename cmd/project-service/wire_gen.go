@@ -23,7 +23,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, services *conf.Services, logger log.Logger) (*kratos.App, func(), error) {
 	db := data.NewDB(confData)
 	dataData, cleanup, err := data.NewData(confData, logger, db)
 	if err != nil {
@@ -35,7 +35,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	investorRepo := data.NewInvestorRepo(dataData, logger)
 	investorUseCase := biz.NewInvestorUseCase(investorRepo, logger)
 	investorService := service.NewInvestorService(investorUseCase, logger)
-	projectRepo := data.NewProjectRepo(dataData, logger)
+	videoClient := data.NewVideoServiceClient(services)
+	projectRepo := data.NewProjectRepo(dataData, logger, videoClient)
 	projectUseCase := biz.NewProjectUseCase(projectRepo, logger)
 	projectService := service.NewProjectService(projectUseCase, logger)
 	roadmapRepo := data.NewRoadmapRepo(dataData, logger)

@@ -115,5 +115,8 @@ func (s *InvestorService) ListInvestor(ctx context.Context, req *pb.ListInvestor
 		})
 	}
 
-	return &pb.ListInvestorReply{}, nil
+	return &pb.ListInvestorReply{
+		Investors: investorsResponse,
+		Total:     int32(total),
+	}, nil
 }
